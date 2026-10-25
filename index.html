@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FriendZone 💗</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      color: #59345f;
+      background: linear-gradient(135deg, #ffe0ef, #eee0ff, #fff2f8);
+      min-height: 100vh;
+    }
+    header {
+      text-align: center;
+      padding: 28px 14px 15px;
+    }
+    .logo { font-size: 45px; }
+    h1 { color: #b43f8d; margin: 8px 0; }
+    header p { color: #805d8b; }
+    .hero {
+      text-align: center;
+      padding: 20px 18px;
+    }
+    .hero h2 { font-size: 27px; }
+    .hero p { line-height: 1.7; }
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      max-width: 650px;
+      margin: 12px auto;
+      padding: 12px;
+    }
+    .card {
+      background: rgba(255,255,255,.8);
+      border: 1px solid #f5c7e5;
+      border-radius: 22px;
+      padding: 22px 10px;
+      text-align: center;
+      box-shadow: 0 7px 20px #bd83bf22;
+    }
+    .emoji { font-size: 38px; }
+    .card h3 { color: #a33b88; }
+    button {
+      border: 0;
+      border-radius: 30px;
+      background: linear-gradient(90deg,#f27ab8,#ad82ee);
+      color: white;
+      font-size: 15px;
+      padding: 12px 18px;
+      cursor: pointer;
+    }
+    .note {
+      display: none;
+      background: white;
+      border-radius: 20px;
+      padding: 22px;
+      margin: 16px;
+      text-align: center;
+      line-height: 1.8;
+    }
+    footer { text-align: center; padding: 25px 10px; }
+    .heart {
+      position: fixed;
+      bottom: -30px;
+      animation: float 6s linear forwards;
+      pointer-events: none;
+    }
+    @keyframes float {
+      to { transform: translateY(-110vh) rotate(25deg); opacity: 0; }
+    }
+    @media (max-width: 360px) {
+      .cards { gap: 8px; padding: 8px; }
+      .card { padding: 16px 6px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">💌</div>
+    <h1>FriendZone</h1>
+    <p>Little gifts, big feelings 💗</p>
+  </header>
+
+  <section class="hero">
+    <h2>একটু ভালোবাসা পাঠাও! 🌷</h2>
+    <p>বন্ধুদের জন্য বানাও সুন্দর Letter, Birthday Gift আর মজার Quiz।</p>
+  </section>
+
+  <main class="cards">
+    <section class="card">
+      <div class="emoji">💌</div>
+      <h3>Love Letter</h3>
+      <p>মনের কথা লিখে পাঠাও।</p>
+      <button onclick="showNote('letter')">শুরু করো</button>
+    </section>
+
+    <section class="card">
+      <div class="emoji">🎁</div>
+      <h3>Birthday Gift</h3>
+      <p>জন্মদিনে চমক দাও।</p>
+      <button onclick="showNote('gift')">শুরু করো</button>
+    </section>
+
+    <section class="card">
+      <div class="emoji">📝</div>
+      <h3>Friendship Quiz</h3>
+      <p>বন্ধুত্বের পরীক্ষা নাও।</p>
+      <button onclick="showNote('quiz')">শুরু করো</button>
+    </section>
+
+    <section class="card">
+      <div class="emoji">💖</div>
+      <h3>Made with Love</h3>
+      <p>ছোট ছোট মুহূর্ত, সুন্দর স্মৃতি।</p>
+      <button onclick="showNote('love')">দেখো</button>
+    </section>
+  </main>
+
+  <section id="note" class="note"></section>
+
+  <footer>Made with 💗 for your favorite people</footer>
+
+  <script>
+    function showNote(type) {
+      const note = document.getElementById('note');
+      const content = {
+        letter: '<h2>💌 তোমার Letter</h2><p>তোমার মনের কথা লেখার ফিচার শিগগিরই আসছে!</p>',
+        gift: '<h2>🎁 Birthday Gift</h2><p>সাত দিনের জন্য বিশেষ উপহার তৈরির ফিচার শিগগিরই আসছে!</p>',
+        quiz: '<h2>📝 Friendship Quiz</h2><p>নিজের Quiz তৈরি করার ফিচার শিগগিরই আসছে!</p>',
+        love: '<h2>💗 অনেক ভালোবাসা!</h2><p>বন্ধুত্ব হোক সুন্দর আর আনন্দময়।</p>'
+      };
+      note.innerHTML = content[type];
+      note.style.display = 'block';
+      note.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    setInterval(() => {
+      const heart = document.createElement('span');
+      heart.className = 'heart';
+      heart.textContent = ['💗','💖','💕','✨'][Math.floor(Math.random()*4)];
+      heart.style.left = Math.random()*95 + 'vw';
+      heart.style.fontSize = (16 + Math.random()*18) + 'px';
+      document.body.appendChild(heart);
+      setTimeout(() => heart.remove(), 6000);
+    }, 900);
+  </script>
+</body>
+  </html>
