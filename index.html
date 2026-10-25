@@ -1,152 +1,204 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FriendZone 💗</title>
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      color: #59345f;
-      background: linear-gradient(135deg, #ffe0ef, #eee0ff, #fff2f8);
-      min-height: 100vh;
-    }
-    header {
-      text-align: center;
-      padding: 28px 14px 15px;
-    }
-    .logo { font-size: 45px; }
-    h1 { color: #b43f8d; margin: 8px 0; }
-    header p { color: #805d8b; }
-    .hero {
-      text-align: center;
-      padding: 20px 18px;
-    }
-    .hero h2 { font-size: 27px; }
-    .hero p { line-height: 1.7; }
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 14px;
-      max-width: 650px;
-      margin: 12px auto;
-      padding: 12px;
-    }
-    .card {
-      background: rgba(255,255,255,.8);
-      border: 1px solid #f5c7e5;
-      border-radius: 22px;
-      padding: 22px 10px;
-      text-align: center;
-      box-shadow: 0 7px 20px #bd83bf22;
-    }
-    .emoji { font-size: 38px; }
-    .card h3 { color: #a33b88; }
-    button {
-      border: 0;
-      border-radius: 30px;
-      background: linear-gradient(90deg,#f27ab8,#ad82ee);
-      color: white;
-      font-size: 15px;
-      padding: 12px 18px;
-      cursor: pointer;
-    }
-    .note {
-      display: none;
-      background: white;
-      border-radius: 20px;
-      padding: 22px;
-      margin: 16px;
-      text-align: center;
-      line-height: 1.8;
-    }
-    footer { text-align: center; padding: 25px 10px; }
-    .heart {
-      position: fixed;
-      bottom: -30px;
-      animation: float 6s linear forwards;
-      pointer-events: none;
-    }
-    @keyframes float {
-      to { transform: translateY(-110vh) rotate(25deg); opacity: 0; }
-    }
-    @media (max-width: 360px) {
-      .cards { gap: 8px; padding: 8px; }
-      .card { padding: 16px 6px; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FriendZone 💗</title>
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;font-family:Arial,sans-serif;color:#632d58;
+  background:linear-gradient(135deg,#ffe3ef,#f0e4ff);
+  min-height:100vh
+}
+header{text-align:center;padding:28px 12px 12px}
+h1{font-size:34px;margin:4px}
+header p{margin:8px}
+main{max-width:650px;margin:auto;padding:16px}
+.card{
+  background:#ffffffdf;border:1px solid #fff;border-radius:22px;
+  padding:22px;margin:14px 0;box-shadow:0 8px 25px #b76ba522
+}
+h2{margin-top:0;color:#c34b91}
+input,textarea{
+  display:block;width:100%;padding:13px;margin:10px 0;
+  border:1px solid #e9b8d5;border-radius:12px;
+  font:inherit;background:white;color:#632d58
+}
+textarea{min-height:130px;resize:vertical}
+button{
+  border:0;border-radius:25px;padding:12px 18px;margin:5px;
+  background:linear-gradient(90deg,#f47caf,#ae83ed);
+  color:white;font-size:15px;font-weight:bold;cursor:pointer
+}
+button.secondary{background:#7653a5}
+#preview{
+  white-space:pre-wrap;background:#fff3f8;border:1px dashed #e9a4cb;
+  border-radius:16px;padding:18px;line-height:1.7;overflow-wrap:anywhere
+}
+.hidden{display:none}
+.small{font-size:13px;color:#805b7c;line-height:1.6}
+footer{text-align:center;padding:20px}
+</style>
 </head>
 <body>
-  <header>
-    <div class="logo">💌</div>
-    <h1>FriendZone</h1>
-    <p>Little gifts, big feelings 💗</p>
-  </header>
+<header>
+  <h1>💗 FriendZone 💗</h1>
+  <p>বন্ধুত্বের ছোট্ট সুন্দর একটা জায়গা ✨</p>
+</header>
 
-  <section class="hero">
-    <h2>একটু ভালোবাসা পাঠাও! 🌷</h2>
-    <p>বন্ধুদের জন্য বানাও সুন্দর Letter, Birthday Gift আর মজার Quiz।</p>
+<main>
+  <section class="card" id="home">
+    <h2>🌷 Welcome to FriendZone</h2>
+    <p>বন্ধুর জন্য মনের কথা লিখে পাঠাও। 💌</p>
+    <button onclick="openCreator()">💌 Create a Love Letter</button>
   </section>
 
-  <main class="cards">
-    <section class="card">
-      <div class="emoji">💌</div>
-      <h3>Love Letter</h3>
-      <p>মনের কথা লিখে পাঠাও।</p>
-      <button onclick="showNote('letter')">শুরু করো</button>
-    </section>
+  <section class="card hidden" id="creator">
+    <h2>💌 তোমার চিঠি তৈরি করো</h2>
+    <form id="letterForm">
+      <label for="sender">তোমার নাম</label>
+      <input id="sender" maxlength="50" placeholder="তোমার নাম (ঐচ্ছিক)">
 
-    <section class="card">
-      <div class="emoji">🎁</div>
-      <h3>Birthday Gift</h3>
-      <p>জন্মদিনে চমক দাও।</p>
-      <button onclick="showNote('gift')">শুরু করো</button>
-    </section>
+      <label for="recipient">বন্ধুর নাম</label>
+      <input id="recipient" maxlength="50" placeholder="যার জন্য চিঠি" required>
 
-    <section class="card">
-      <div class="emoji">📝</div>
-      <h3>Friendship Quiz</h3>
-      <p>বন্ধুত্বের পরীক্ষা নাও।</p>
-      <button onclick="showNote('quiz')">শুরু করো</button>
-    </section>
+      <label for="message">তোমার মনের কথা</label>
+      <textarea id="message" maxlength="2500"
+        placeholder="প্রিয় বন্ধু, তোমাকে একটা কথা বলতে চাই..." required></textarea>
 
-    <section class="card">
-      <div class="emoji">💖</div>
-      <h3>Made with Love</h3>
-      <p>ছোট ছোট মুহূর্ত, সুন্দর স্মৃতি।</p>
-      <button onclick="showNote('love')">দেখো</button>
-    </section>
-  </main>
+      <button type="submit">💖 চিঠি তৈরি করো</button>
+      <button type="button" class="secondary" onclick="goHome()">ফিরে যাও</button>
+    </form>
+  </section>
 
-  <section id="note" class="note"></section>
+  <section class="card hidden" id="result">
+    <h2>💗 তোমার চিঠি তৈরি হয়েছে!</h2>
+    <div id="preview"></div>
+    <p class="small">এই লিংক যার কাছে পাঠাবে, সে চিঠিটি দেখতে পারবে। ব্যক্তিগত বা গোপন তথ্য লিখবে না।</p>
+    <button onclick="shareLetter()">🔗 শেয়ার লিংক কপি করো</button>
+    <button class="secondary" onclick="newLetter()">✍️ নতুন চিঠি</button>
+    <p id="status" class="small" aria-live="polite"></p>
+  </section>
 
-  <footer>Made with 💗 for your favorite people</footer>
+  <section class="card" id="otherFeatures">
+    <h2>🎁 আরও আসছে</h2>
+    <p>🎂 Birthday Gift Creator — শিগগিরই</p>
+    <p>📝 Friendship Quiz — শিগগিরই</p>
+    <p>💞 Made with Love</p>
+  </section>
+</main>
 
-  <script>
-    function showNote(type) {
-      const note = document.getElementById('note');
-      const content = {
-        letter: '<h2>💌 তোমার Letter</h2><p>তোমার মনের কথা লেখার ফিচার শিগগিরই আসছে!</p>',
-        gift: '<h2>🎁 Birthday Gift</h2><p>সাত দিনের জন্য বিশেষ উপহার তৈরির ফিচার শিগগিরই আসছে!</p>',
-        quiz: '<h2>📝 Friendship Quiz</h2><p>নিজের Quiz তৈরি করার ফিচার শিগগিরই আসছে!</p>',
-        love: '<h2>💗 অনেক ভালোবাসা!</h2><p>বন্ধুত্ব হোক সুন্দর আর আনন্দময়।</p>'
-      };
-      note.innerHTML = content[type];
-      note.style.display = 'block';
-      note.scrollIntoView({ behavior: 'smooth', block: 'center' });
+<footer>Made with 💗 for friends</footer>
+
+<script>
+const $ = id => document.getElementById(id);
+
+function openCreator(){
+  $("creator").classList.remove("hidden");
+  $("result").classList.add("hidden");
+  $("creator").scrollIntoView({behavior:"smooth"});
+}
+function goHome(){
+  $("creator").classList.add("hidden");
+  $("home").scrollIntoView({behavior:"smooth"});
+}
+function safeText(value){
+  return String(value || "").slice(0,2500);
+}
+function encodeLetter(sender, recipient, message){
+  const data = {s:sender,r:recipient,m:message};
+  return btoa(unescape(encodeURIComponent(JSON.stringify(data))));
+}
+function decodeLetter(encoded){
+  return JSON.parse(decodeURIComponent(escape(atob(encoded))));
+}
+function showLetter(data){
+  $("creator").classList.add("hidden");
+  $("home").classList.add("hidden");
+  $("otherFeatures").classList.add("hidden");
+  $("result").classList.remove("hidden");
+
+  const preview = $("preview");
+  preview.replaceChildren();
+
+  const title = document.createElement("h3");
+  title.textContent = "💌 প্রিয় " + data.r + ",";
+  const message = document.createElement("p");
+  message.textContent = data.m;
+  const from = document.createElement("p");
+  from.textContent = "ইতি, " + (data.s || "তোমার বন্ধু") + " 💗";
+
+  preview.append(title,message,from);
+  $("result").scrollIntoView({behavior:"smooth"});
+}
+$("letterForm").addEventListener("submit", function(event){
+  event.preventDefault();
+  const data = {
+    s:safeText($("sender").value.trim()).slice(0,50),
+    r:safeText($("recipient").value.trim()).slice(0,50),
+    m:safeText($("message").value.trim())
+  };
+  if(!data.r || !data.m){
+    alert("বন্ধুর নাম এবং চিঠি লিখো।");
+    return;
+  }
+  try{
+    const encoded = encodeLetter(data.s,data.r,data.m);
+    history.replaceState(null,"",location.pathname + "#letter=" + encoded);
+    showLetter(data);
+    $("status").textContent = "লিংক তৈরি হয়েছে। শেয়ার করার আগে পরীক্ষা করে নাও।";
+  }catch(error){
+    alert("চিঠি তৈরি করা যায়নি। আবার চেষ্টা করো।");
+  }
+});
+async function shareLetter(){
+  const encoded = location.hash.startsWith("#letter=")
+    ? location.hash.slice(8) : "";
+  if(!encoded){
+    $("status").textContent = "আগে চিঠি তৈরি করো।";
+    return;
+  }
+  const url = location.href;
+  try{
+    if(navigator.share){
+      await navigator.share({title:"একটি FriendZone চিঠি 💌",url});
+    }else if(navigator.clipboard && window.isSecureContext){
+      await navigator.clipboard.writeText(url);
+      $("status").textContent = "লিংক কপি হয়েছে! বন্ধুকে পাঠাও 💗";
+    }else{
+      prompt("এই লিংকটি কপি করে বন্ধুকে পাঠাও:",url);
     }
-
-    setInterval(() => {
-      const heart = document.createElement('span');
-      heart.className = 'heart';
-      heart.textContent = ['💗','💖','💕','✨'][Math.floor(Math.random()*4)];
-      heart.style.left = Math.random()*95 + 'vw';
-      heart.style.fontSize = (16 + Math.random()*18) + 'px';
-      document.body.appendChild(heart);
-      setTimeout(() => heart.remove(), 6000);
-    }, 900);
-  </script>
+  }catch(error){
+    if(error.name !== "AbortError"){
+      prompt("এই লিংকটি কপি করে বন্ধুকে পাঠাও:",url);
+    }
+  }
+}
+function newLetter(){
+  $("letterForm").reset();
+  $("result").classList.add("hidden");
+  $("home").classList.remove("hidden");
+  $("otherFeatures").classList.remove("hidden");
+  history.replaceState(null,"",location.pathname);
+  openCreator();
+}
+function loadSharedLetter(){
+  const prefix = "#letter=";
+  if(!location.hash.startsWith(prefix)) return;
+  try{
+    const data = decodeLetter(location.hash.slice(prefix.length));
+    if(typeof data.r !== "string" || typeof data.m !== "string") return;
+    showLetter({
+      s:safeText(data.s).slice(0,50),
+      r:safeText(data.r).slice(0,50),
+      m:safeText(data.m)
+    });
+  }catch(error){
+    $("status").textContent = "চিঠির লিংকটি সঠিক নয়।";
+  }
+}
+loadSharedLetter();
+</script>
 </body>
   </html>
