@@ -82,6 +82,145 @@ footer{text-align:center;padding:20px}
   </section>
 
   <section class="card" id="otherFeatures">
+   <section class="card" id="birthdayGift">
+  <h2>🎁 Birthday Gift Creator</h2>
+  <p>বন্ধুর জন্য ভালোবাসায় ভরা একটি ভার্চুয়াল উপহার বানাও! 💗</p>
+
+  <form id="giftForm">
+    <label for="giftSender">তোমার নাম</label>
+    <input id="giftSender" maxlength="50" placeholder="তোমার নাম (ঐচ্ছিক)">
+
+    <label for="giftRecipient">বন্ধুর নাম</label>
+    <input id="giftRecipient" maxlength="50" placeholder="বন্ধুর নাম" required>
+
+    <label for="giftMessage">জন্মদিনের শুভেচ্ছা</label>
+    <textarea id="giftMessage" maxlength="1500"
+      placeholder="শুভ জন্মদিন! 🎂 তোমার দিনটি আনন্দে ভরে উঠুক..." required></textarea>
+
+    <button type="submit">🎁 গিফট তৈরি করো</button>
+  </form>
+
+  <div id="giftResult" class="hidden">
+    <div id="giftPreview" style="text-align:center;background:#fff0f7;padding:20px;border-radius:18px;margin-top:15px">
+      <div style="font-size:55px">🎁💗🎂</div>
+      <h2 id="giftTitle"></h2>
+      <p id="giftText" style="white-space:pre-wrap;overflow-wrap:anywhere"></p>
+      <p id="giftFrom"></p>
+      <p>🌸 তোমার দিনটি সুন্দর হোক! 🌸</p>
+    </div>
+    <button type="button" onclick="shareBirthdayGift()">🔗 গিফটের লিংক শেয়ার করো</button>
+    <button type="button" class="secondary" onclick="resetBirthdayGift()">নতুন গিফট বানাও</button>
+    <p id="giftStatus" class="small" aria-live="polite"></p>
+  </div>
+</section>
+
+<script>
+function encodeGiftData(data) {
+  return btoa(unescape(encodeURIComponent(JSON.stringify(data))));
+}
+
+function decodeGiftData(value) {
+  return JSON.parse(decodeURIComponent(escape(atob(value))));
+}
+
+function displayBirthdayGift(data) {
+  document.getElementById("giftTitle").textContent =
+    "শুভ জন্মদিন, " + data.r + "! 🎂";
+
+  document.getElementById("giftText").textContent = data.m;
+
+  document.getElementById("giftFrom").textContent =
+    "ভালোবাসাসহ, " + (data.s || "তোমার বন্ধু") + " 💗";
+
+  document.getElementById("giftResult").classList.remove("hidden");
+  document.getElementById("giftResult").scrollIntoView({behavior:"smooth"});
+}
+
+document.getElementById("giftForm").addEventListener("submit", function(e) {
+  e.preventDefault();
+
+  const recipient = document.getElementById("giftRecipient").value.trim();
+  const message = document.getElementById("giftMessage").value.trim();
+  const sender = document.getElementById("giftSender").value.trim();
+
+  if (!recipient || !message) {
+    alert("বন্ধুর নাম ও শুভেচ্ছা লিখো!");
+    return;
+  }
+
+  const data = {
+    s: sender.slice(0, 50),
+    r: recipient.slice(0, 50),
+    m: message.slice(0, 1500),
+    expires: Date.now() + 7 * 24 * 60 * 60 * 1000
+  };
+
+  try {
+    const encoded = encodeGiftData(data);
+    history.replaceState(null, "", location.pathname + "#gift=" + encoded);
+    displayBirthdayGift(data);
+    document.getElementById("giftStatus").textContent =
+      "গিফট তৈরি হয়েছে! লিংকটি পরীক্ষা করে তারপর শেয়ার করো।";
+  } catch (err) {
+    alert("গিফট তৈরি হয়নি। আবার চেষ্টা করো।");
+  }
+});
+
+async function shareBirthdayGift() {
+  const prefix = "#gift=";
+
+  if (!location.hash.startsWith(prefix)) {
+    document.getElementById("giftStatus").textContent =
+      "আগে গিফট তৈরি করো।";
+    return;
+  }
+
+  const url = location.href;
+
+  try {
+    if (navigator.share) {
+      await navigator.share({title:"Birthday Gift 🎁", url:url});
+    } else if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(url);
+      document.getElementById("giftStatus").textContent =
+        "লিংক কপি হয়েছে! বন্ধুকে পাঠাও 💗";
+    } else {
+      prompt("এই লিংকটি কপি করে বন্ধুকে পাঠাও:", url);
+    }
+  } catch (err) {
+    if (err.name !== "AbortError") {
+      prompt("এই লিংকটি কপি করে বন্ধুকে পাঠাও:", url);
+    }
+  }
+}
+
+function resetBirthdayGift() {
+  document.getElementById("giftForm").reset();
+  document.getElementById("giftResult").classList.add("hidden");
+  history.replaceState(null, "", location.pathname);
+}
+
+(function loadBirthdayGift() {
+  if (!location.hash.startsWith("#gift=")) return;
+
+  try {
+    const data = decodeGiftData(location.hash.slice(6));
+
+    if (!data.r || !data.m || !data.expires) return;
+
+    if (Date.now() > data.expires) {
+      document.getElementById("giftStatus").textContent =
+        "এই গিফটের ৭ দিনের মেয়াদ শেষ হয়েছে। 💗";
+      return;
+    }
+
+    displayBirthdayGift(data);
+  } catch (err) {
+    document.getElementById("giftStatus").textContent =
+      "গিফটের লিংকটি সঠিক নয়।";
+  }
+})();
+</script>
     <h2>🎁 আরও আসছে</h2>
     <p>🎂 Birthday Gift Creator — শিগগিরই</p>
     <p>📝 Friendship Quiz — শিগগিরই</p>
