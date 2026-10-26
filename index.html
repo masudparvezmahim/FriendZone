@@ -2,44 +2,31 @@
 <html lang="bn">
 <head>
 <meta charset="UTF-8">
-  <meta name="google-site-verification" content="qhxz5_4WMjZgk9lM3I-nYWYoRWNTcStRlQINdFATdys" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f7d9eb">
 <title>FriendZone 💗</title>
 <style>
 *{box-sizing:border-box}
-body{
-  margin:0;font-family:Arial,sans-serif;color:#632d58;
-  background:linear-gradient(135deg,#ffe3ef,#f0e4ff);
-  min-height:100vh
-}
-header{text-align:center;padding:28px 12px 12px}
-h1{font-size:34px;margin:4px}
-header p{margin:8px}
-main{max-width:650px;margin:auto;padding:16px}
-.card{
-  background:#ffffffdf;border:1px solid #fff;border-radius:22px;
-  padding:22px;margin:14px 0;box-shadow:0 8px 25px #b76ba522
-}
-h2{margin-top:0;color:#c34b91}
-input,textarea{
-  display:block;width:100%;padding:13px;margin:10px 0;
-  border:1px solid #e9b8d5;border-radius:12px;
-  font:inherit;background:white;color:#632d58
-}
-textarea{min-height:130px;resize:vertical}
-button{
-  border:0;border-radius:25px;padding:12px 18px;margin:5px;
-  background:linear-gradient(90deg,#f47caf,#ae83ed);
-  color:white;font-size:15px;font-weight:bold;cursor:pointer
-}
-button.secondary{background:#7653a5}
-#preview{
-  white-space:pre-wrap;background:#fff3f8;border:1px dashed #e9a4cb;
-  border-radius:16px;padding:18px;line-height:1.7;overflow-wrap:anywhere
-}
-.hidden{display:none}
+:root{--ink:#632d58;--pink:#c34b91;--line:#e9b8d5;--purple:#7653a5}
+body{margin:0;font-family:Arial,sans-serif;color:var(--ink);background:linear-gradient(135deg,#ffe3ef,#f0e4ff);min-height:100vh}
+header{text-align:center;padding:28px 12px 12px}h1{font-size:34px;margin:4px}header p{margin:8px}
+main{max-width:760px;margin:auto;padding:16px}
+.card{background:#ffffffdf;border:1px solid #fff;border-radius:22px;padding:22px;margin:14px 0;box-shadow:0 8px 25px #b76ba522}
+h2{margin-top:0;color:var(--pink)}h3{color:var(--pink)}
+input,textarea,select{display:block;width:100%;padding:13px;margin:10px 0;border:1px solid var(--line);border-radius:12px;font:inherit;background:white;color:var(--ink)}
+textarea{min-height:110px;resize:vertical}
+button{border:0;border-radius:25px;padding:12px 18px;margin:5px 3px;background:linear-gradient(90deg,#f47caf,#ae83ed);color:white;font-size:15px;font-weight:bold;cursor:pointer}
+button.secondary{background:var(--purple)}button:disabled{opacity:.55;cursor:not-allowed}
+label{font-weight:600;font-size:14px}
 .small{font-size:13px;color:#805b7c;line-height:1.6}
+.hidden{display:none!important}
+#preview,.preview{white-space:pre-wrap;background:#fff3f8;border:1px dashed #e9a4cb;border-radius:16px;padding:18px;line-height:1.7;overflow-wrap:anywhere}
+.notice{padding:12px;border-radius:12px;background:#fff3f8;line-height:1.6;overflow-wrap:anywhere}
+.pill{display:inline-block;padding:5px 10px;border-radius:20px;background:#f7d9eb;margin:3px;font-size:12px}
+.response{border:1px solid #efd2e3;border-radius:14px;padding:14px;margin:10px 0;background:#fffafd}
+hr{border:0;border-top:1px solid #efd2e3;margin:18px 0}
 footer{text-align:center;padding:20px}
+@media(max-width:480px){h1{font-size:29px}.card{padding:17px}button{max-width:100%}}
 </style>
 </head>
 <body>
@@ -47,7 +34,6 @@ footer{text-align:center;padding:20px}
   <h1>💗 FriendZone 💗</h1>
   <p>বন্ধুত্বের ছোট্ট সুন্দর একটা জায়গা ✨</p>
 </header>
-
 <main>
   <section class="card" id="home">
     <h2>🌷 Welcome to FriendZone</h2>
@@ -58,287 +44,314 @@ footer{text-align:center;padding:20px}
   <section class="card hidden" id="creator">
     <h2>💌 তোমার চিঠি তৈরি করো</h2>
     <form id="letterForm">
-      <label for="sender">তোমার নাম</label>
-      <input id="sender" maxlength="50" placeholder="তোমার নাম (ঐচ্ছিক)">
-
-      <label for="recipient">বন্ধুর নাম</label>
-      <input id="recipient" maxlength="50" placeholder="যার জন্য চিঠি" required>
-
-      <label for="message">তোমার মনের কথা</label>
-      <textarea id="message" maxlength="2500"
-        placeholder="প্রিয় বন্ধু, তোমাকে একটা কথা বলতে চাই..." required></textarea>
-
-      <button type="submit">💖 চিঠি তৈরি করো</button>
-      <button type="button" class="secondary" onclick="goHome()">ফিরে যাও</button>
+      <label for="sender">তোমার নাম (ঐচ্ছিক)</label><input id="sender" maxlength="50" placeholder="তোমার নাম">
+      <label for="recipient">বন্ধুর নাম</label><input id="recipient" maxlength="50" placeholder="যার জন্য চিঠি" required>
+      <label for="message">তোমার মনের কথা</label><textarea id="message" maxlength="2500" placeholder="প্রিয় বন্ধু, তোমাকে একটা কথা বলতে চাই..." required></textarea>
+      <button type="submit">💖 চিঠি তৈরি করো</button><button type="button" class="secondary" onclick="goHome()">ফিরে যাও</button>
     </form>
   </section>
 
   <section class="card hidden" id="result">
-    <h2>💗 তোমার চিঠি তৈরি হয়েছে!</h2>
-    <div id="preview"></div>
-    <p class="small">এই লিংক যার কাছে পাঠাবে, সে চিঠিটি দেখতে পারবে। ব্যক্তিগত বা গোপন তথ্য লিখবে না।</p>
-    <button onclick="shareLetter()">🔗 শেয়ার লিংক কপি করো</button>
-    <button class="secondary" onclick="newLetter()">✍️ নতুন চিঠি</button>
+    <h2>💗 তোমার চিঠি তৈরি হয়েছে!</h2><div id="preview"></div>
+    <p class="small">লিংক যার কাছে পাঠাবে, সে চিঠিটি দেখতে পারবে। ব্যক্তিগত বা গোপন তথ্য লিখবে না।</p>
+    <button onclick="shareLetter()">🔗 শেয়ার লিংক কপি করো</button><button class="secondary" onclick="newLetter()">✍️ নতুন চিঠি</button>
     <p id="status" class="small" aria-live="polite"></p>
   </section>
 
-  <section class="card" id="otherFeatures">
-   <section class="card" id="birthdayGift">
-  <h2>🎁 Birthday Gift Creator</h2>
-  <p>বন্ধুর জন্য ভালোবাসায় ভরা একটি ভার্চুয়াল উপহার বানাও! 💗</p>
-
-  <form id="giftForm">
-    <label for="giftSender">তোমার নাম</label>
-    <input id="giftSender" maxlength="50" placeholder="তোমার নাম (ঐচ্ছিক)">
-
-    <label for="giftRecipient">বন্ধুর নাম</label>
-    <input id="giftRecipient" maxlength="50" placeholder="বন্ধুর নাম" required>
-
-    <label for="giftMessage">জন্মদিনের শুভেচ্ছা</label>
-    <textarea id="giftMessage" maxlength="1500"
-      placeholder="শুভ জন্মদিন! 🎂 তোমার দিনটি আনন্দে ভরে উঠুক..." required></textarea>
-
-    <button type="submit">🎁 গিফট তৈরি করো</button>
-  </form>
-
-  <div id="giftResult" class="hidden">
-    <div id="giftPreview" style="text-align:center;background:#fff0f7;padding:20px;border-radius:18px;margin-top:15px">
-      <div style="font-size:55px">🎁💗🎂</div>
-      <h2 id="giftTitle"></h2>
-      <p id="giftText" style="white-space:pre-wrap;overflow-wrap:anywhere"></p>
-      <p id="giftFrom"></p>
-      <p>🌸 তোমার দিনটি সুন্দর হোক! 🌸</p>
+  <section class="card" id="birthdayGift">
+    <h2>🎁 Birthday Gift Creator</h2>
+    <p>বন্ধুর জন্য ভালোবাসায় ভরা একটি ভার্চুয়াল উপহার বানাও! 💗</p>
+    <form id="giftForm">
+      <label for="giftSender">তোমার নাম (ঐচ্ছিক)</label><input id="giftSender" maxlength="50" placeholder="তোমার নাম">
+      <label for="giftRecipient">বন্ধুর নাম</label><input id="giftRecipient" maxlength="50" placeholder="বন্ধুর নাম" required>
+      <label for="giftMessage">জন্মদিনের শুভেচ্ছা</label><textarea id="giftMessage" maxlength="1500" placeholder="শুভ জন্মদিন! 🎂 তোমার দিনটি আনন্দে ভরে উঠুক..." required></textarea>
+      <button type="submit">🎁 গিফট তৈরি করো</button>
+    </form>
+    <div id="giftResult" class="hidden">
+      <div class="preview" style="text-align:center;background:#fff0f7">
+        <div style="font-size:55px">🎁💗🎂</div><h2 id="giftTitle"></h2><p id="giftText"></p><p id="giftFrom"></p><p>🌸 তোমার দিনটি সুন্দর হোক! 🌸</p>
+      </div>
+      <button type="button" onclick="shareBirthdayGift()">🔗 গিফটের লিংক শেয়ার করো</button><button type="button" class="secondary" onclick="resetBirthdayGift()">নতুন গিফট বানাও</button>
+      <p id="giftStatus" class="small" aria-live="polite"></p>
     </div>
-    <button type="button" onclick="shareBirthdayGift()">🔗 গিফটের লিংক শেয়ার করো</button>
-    <button type="button" class="secondary" onclick="resetBirthdayGift()">নতুন গিফট বানাও</button>
-    <p id="giftStatus" class="small" aria-live="polite"></p>
-  </div>
-</section>
+  </section>
 
-<script>
-function encodeGiftData(data) {
-  return btoa(unescape(encodeURIComponent(JSON.stringify(data))));
-}
+  <section class="card" id="truthDare">
+    <h2>🎲 Truth or Dare</h2>
+    <p>নিজের প্রশ্ন ও চ্যালেঞ্জ দিয়ে গেম বানাও, বন্ধুকে লিংক পাঠাও এবং পরে তার উত্তর দেখো।</p>
+    <div id="tdSetup">
+      <form id="tdCreateForm">
+        <label for="tdOwnerName">তোমার নাম</label><input id="tdOwnerName" maxlength="50" placeholder="গেম তৈরি করছে যে" required>
+        <label for="tdGameTitle">গেমের নাম</label><input id="tdGameTitle" maxlength="80" placeholder="যেমন: Best Friends Challenge" required>
+        <label for="tdTruths">Truth প্রশ্ন (প্রতি লাইনে একটি; সর্বোচ্চ 20টি)</label>
+        <textarea id="tdTruths" maxlength="5000" required placeholder="তোমার সবচেয়ে মজার স্মৃতি কী?&#10;কোন বন্ধুকে সবচেয়ে বেশি বিশ্বাস করো?"></textarea>
+        <label for="tdDares">Dare চ্যালেঞ্জ (প্রতি লাইনে একটি; সর্বোচ্চ 20টি)</label>
+        <textarea id="tdDares" maxlength="5000" required placeholder="একটি মজার ইমোজি পাঠাও।&#10;নিজের সম্পর্কে তিনটি মজার তথ্য বলো।"></textarea>
+        <button id="tdCreateButton" type="submit">✨ গেম তৈরি করো</button>
+      </form>
+      <p class="small">নিরাপদ ও সম্মতিপূর্ণ প্রশ্ন/চ্যালেঞ্জ ব্যবহার করো। কাউকে ব্যক্তিগত তথ্য, বিপজ্জনক কাজ বা অপমানজনক কিছু করতে বলবে না।</p>
+    </div>
 
-function decodeGiftData(value) {
-  return JSON.parse(decodeURIComponent(escape(atob(value))));
-}
+    <div id="tdCreated" class="hidden">
+      <h3>🎉 তোমার গেম তৈরি হয়েছে!</h3>
+      <p>এই Player Link বন্ধুদের পাঠাও:</p><div id="tdPlayerLink" class="notice"></div><button type="button" onclick="copyTdLink('player')">🔗 Player Link কপি</button>
+      <hr><p>এই Owner Link গোপন রাখো। এখানেই জমা দেওয়া উত্তর দেখতে পারবে:</p><div id="tdOwnerLink" class="notice"></div><button type="button" onclick="copyTdLink('owner')">🔐 Owner Link কপি</button>
+      <p class="small">Owner Link যাকে দেবে, সে গেমের উত্তর দেখতে পারবে। এটি প্রকাশ্যে পোস্ট কোরো না।</p>
+      <button class="secondary" type="button" onclick="resetTdCreator()">আরেকটি গেম তৈরি করো</button>
+    </div>
 
-function displayBirthdayGift(data) {
-  document.getElementById("giftTitle").textContent =
-    "শুভ জন্মদিন, " + data.r + "! 🎂";
+    <div id="tdPlayerView" class="hidden">
+      <h3 id="tdPlayerHeading"></h3><p id="tdPlayerIntro" class="small"></p>
+      <form id="tdPlayForm">
+        <label for="tdPlayerName">তোমার নাম</label><input id="tdPlayerName" maxlength="50" required placeholder="তোমার নাম">
+        <p><strong>কোনটি বেছে নেবে?</strong></p>
+        <label><input style="display:inline;width:auto;margin-right:7px" type="radio" name="tdChoice" value="truth" required> 💗 Truth</label>
+        <label><input style="display:inline;width:auto;margin-right:7px" type="radio" name="tdChoice" value="dare" required> 🔥 Dare</label>
+        <button type="submit" id="tdChooseButton">চ্যালেঞ্জ দেখাও</button>
+      </form>
+      <div id="tdChallenge" class="hidden">
+        <div class="preview"><span id="tdChoiceBadge" class="pill"></span><h3 id="tdPrompt"></h3></div>
+        <form id="tdAnswerForm" class="hidden">
+          <label for="tdAnswer">তোমার উত্তর</label><textarea id="tdAnswer" maxlength="2000" placeholder="এখানে উত্তর লিখো..." required></textarea>
+          <button type="submit" id="tdSubmitAnswer">উত্তর জমা দাও</button>
+        </form>
+        <form id="tdDareForm" class="hidden">
+          <label><input id="tdDareDone" type="checkbox" style="display:inline;width:auto"> আমি চ্যালেঞ্জটি সম্পন্ন করেছি</label>
+          <button type="submit" id="tdSubmitDare">জমা দাও</button>
+        </form>
+        <p id="tdPlayStatus" class="small" aria-live="polite"></p>
+      </div>
+    </div>
 
-  document.getElementById("giftText").textContent = data.m;
+    <div id="tdOwnerView" class="hidden">
+      <h3 id="tdOwnerHeading">📋 তোমার গেমের উত্তর</h3><p id="tdOwnerMeta" class="small"></p>
+      <button type="button" onclick="loadOwnerResponses()">🔄 উত্তর রিফ্রেশ করো</button>
+      <div id="tdResponses"></div><p id="tdOwnerStatus" class="small" aria-live="polite"></p>
+    </div>
+    <div id="tdGlobalStatus" class="small" aria-live="polite"></div>
+  </section>
 
-  document.getElementById("giftFrom").textContent =
-    "ভালোবাসাসহ, " + (data.s || "তোমার বন্ধু") + " 💗";
-
-  document.getElementById("giftResult").classList.remove("hidden");
-  document.getElementById("giftResult").scrollIntoView({behavior:"smooth"});
-}
-
-document.getElementById("giftForm").addEventListener("submit", function(e) {
-  e.preventDefault();
-
-  const recipient = document.getElementById("giftRecipient").value.trim();
-  const message = document.getElementById("giftMessage").value.trim();
-  const sender = document.getElementById("giftSender").value.trim();
-
-  if (!recipient || !message) {
-    alert("বন্ধুর নাম ও শুভেচ্ছা লিখো!");
-    return;
-  }
-
-  const data = {
-    s: sender.slice(0, 50),
-    r: recipient.slice(0, 50),
-    m: message.slice(0, 1500),
-    expires: Date.now() + 7 * 24 * 60 * 60 * 1000
-  };
-
-  try {
-    const encoded = encodeGiftData(data);
-    history.replaceState(null, "", location.pathname + "#gift=" + encoded);
-    displayBirthdayGift(data);
-    document.getElementById("giftStatus").textContent =
-      "গিফট তৈরি হয়েছে! লিংকটি পরীক্ষা করে তারপর শেয়ার করো।";
-  } catch (err) {
-    alert("গিফট তৈরি হয়নি। আবার চেষ্টা করো।");
-  }
-});
-
-async function shareBirthdayGift() {
-  const prefix = "#gift=";
-
-  if (!location.hash.startsWith(prefix)) {
-    document.getElementById("giftStatus").textContent =
-      "আগে গিফট তৈরি করো।";
-    return;
-  }
-
-  const url = location.href;
-
-  try {
-    if (navigator.share) {
-      await navigator.share({title:"Birthday Gift 🎁", url:url});
-    } else if (navigator.clipboard && window.isSecureContext) {
-      await navigator.clipboard.writeText(url);
-      document.getElementById("giftStatus").textContent =
-        "লিংক কপি হয়েছে! বন্ধুকে পাঠাও 💗";
-    } else {
-      prompt("এই লিংকটি কপি করে বন্ধুকে পাঠাও:", url);
-    }
-  } catch (err) {
-    if (err.name !== "AbortError") {
-      prompt("এই লিংকটি কপি করে বন্ধুকে পাঠাও:", url);
-    }
-  }
-}
-
-function resetBirthdayGift() {
-  document.getElementById("giftForm").reset();
-  document.getElementById("giftResult").classList.add("hidden");
-  history.replaceState(null, "", location.pathname);
-}
-
-(function loadBirthdayGift() {
-  if (!location.hash.startsWith("#gift=")) return;
-
-  try {
-    const data = decodeGiftData(location.hash.slice(6));
-
-    if (!data.r || !data.m || !data.expires) return;
-
-    if (Date.now() > data.expires) {
-      document.getElementById("giftStatus").textContent =
-        "এই গিফটের ৭ দিনের মেয়াদ শেষ হয়েছে। 💗";
-      return;
-    }
-
-    displayBirthdayGift(data);
-  } catch (err) {
-    document.getElementById("giftStatus").textContent =
-      "গিফটের লিংকটি সঠিক নয়।";
-  }
-})();
-</script>
-    <h2>🎁 আরও আসছে</h2>
-    <p>🎂 Birthday Gift Creator — শিগগিরই</p>
-    <p>📝 Friendship Quiz — শিগগিরই</p>
-    <p>💞 Made with Love</p>
+  <section class="card">
+    <h2>🌸 আরও আসছে</h2><p>📝 Friendship Quiz — শিগগিরই</p><p>💞 Made with Love</p>
   </section>
 </main>
-
 <footer>Made with 💗 for friends</footer>
 
+<!-- Supabase JS v2. Replace the two placeholders below with your Supabase project values. -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+const SUPABASE_URL = "YOUR_SUPABASE_URL";
+const SUPABASE_ANON_KEY = "YOUR_SUPABASE_PUBLISHABLE_OR_ANON_KEY";
+let supabaseClient = null;
+if (window.supabase && SUPABASE_URL.startsWith("https://") && !SUPABASE_URL.includes("YOUR_") && !SUPABASE_ANON_KEY.includes("YOUR_")) {
+  supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+}
 const $ = id => document.getElementById(id);
+const show = id => $(id).classList.remove("hidden");
+const hide = id => $(id).classList.add("hidden");
+function setStatus(id, text){ $(id).textContent = text; }
+function b64Encode(data){ return btoa(unescape(encodeURIComponent(JSON.stringify(data)))); }
+function b64Decode(value){ return JSON.parse(decodeURIComponent(escape(atob(value)))); }
+function safeText(value, max=2500){ return String(value || "").slice(0,max); }
+function currentBase(){ return location.href.split("#")[0]; }
+async function copyText(value, statusId){
+  try {
+    if (navigator.clipboard && window.isSecureContext) { await navigator.clipboard.writeText(value); setStatus(statusId,"লিংক কপি হয়েছে! 💗"); }
+    else { window.prompt("লিংকটি কপি করো:",value); }
+  } catch(e) { window.prompt("লিংকটি কপি করো:",value); }
+}
 
-function openCreator(){
-  $("creator").classList.remove("hidden");
-  $("result").classList.add("hidden");
-  $("creator").scrollIntoView({behavior:"smooth"});
-}
-function goHome(){
-  $("creator").classList.add("hidden");
-  $("home").scrollIntoView({behavior:"smooth"});
-}
-function safeText(value){
-  return String(value || "").slice(0,2500);
-}
-function encodeLetter(sender, recipient, message){
-  const data = {s:sender,r:recipient,m:message};
-  return btoa(unescape(encodeURIComponent(JSON.stringify(data))));
-}
-function decodeLetter(encoded){
-  return JSON.parse(decodeURIComponent(escape(atob(encoded))));
-}
+/* Existing Love Letter feature */
+function openCreator(){ show("creator"); hide("result"); $("creator").scrollIntoView({behavior:"smooth"}); }
+function goHome(){ hide("creator"); $("home").scrollIntoView({behavior:"smooth"}); }
+function encodeLetter(data){ return b64Encode(data); }
 function showLetter(data){
-  $("creator").classList.add("hidden");
-  $("home").classList.add("hidden");
-  $("otherFeatures").classList.add("hidden");
-  $("result").classList.remove("hidden");
-
-  const preview = $("preview");
-  preview.replaceChildren();
-
-  const title = document.createElement("h3");
-  title.textContent = "💌 প্রিয় " + data.r + ",";
-  const message = document.createElement("p");
-  message.textContent = data.m;
-  const from = document.createElement("p");
-  from.textContent = "ইতি, " + (data.s || "তোমার বন্ধু") + " 💗";
-
-  preview.append(title,message,from);
-  $("result").scrollIntoView({behavior:"smooth"});
+  hide("creator"); hide("home"); hide("birthdayGift"); hide("truthDare"); hide("result"); show("result");
+  const preview=$("preview"); preview.replaceChildren();
+  const title=document.createElement("h3"); title.textContent="💌 প্রিয় "+data.r+",";
+  const message=document.createElement("p"); message.textContent=data.m;
+  const from=document.createElement("p"); from.textContent="ইতি, "+(data.s||"তোমার বন্ধু")+" 💗";
+  preview.append(title,message,from); $("result").scrollIntoView({behavior:"smooth"});
 }
-$("letterForm").addEventListener("submit", function(event){
-  event.preventDefault();
-  const data = {
-    s:safeText($("sender").value.trim()).slice(0,50),
-    r:safeText($("recipient").value.trim()).slice(0,50),
-    m:safeText($("message").value.trim())
-  };
-  if(!data.r || !data.m){
-    alert("বন্ধুর নাম এবং চিঠি লিখো।");
-    return;
-  }
-  try{
-    const encoded = encodeLetter(data.s,data.r,data.m);
-    history.replaceState(null,"",location.pathname + "#letter=" + encoded);
-    showLetter(data);
-    $("status").textContent = "লিংক তৈরি হয়েছে। শেয়ার করার আগে পরীক্ষা করে নাও।";
-  }catch(error){
-    alert("চিঠি তৈরি করা যায়নি। আবার চেষ্টা করো।");
-  }
+$("letterForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  const data={s:safeText($("sender").value.trim(),50),r:safeText($("recipient").value.trim(),50),m:safeText($("message").value.trim(),2500)};
+  if(!data.r||!data.m)return;
+  history.replaceState(null,"",currentBase()+"#letter="+encodeLetter(data));
+  showLetter(data); setStatus("status","লিংক তৈরি হয়েছে। শেয়ার করার আগে পরীক্ষা করে নাও।");
 });
 async function shareLetter(){
-  const encoded = location.hash.startsWith("#letter=")
-    ? location.hash.slice(8) : "";
-  if(!encoded){
-    $("status").textContent = "আগে চিঠি তৈরি করো।";
-    return;
+  if(!location.hash.startsWith("#letter=")){setStatus("status","আগে চিঠি তৈরি করো।");return;}
+  const url=location.href;
+  try{if(navigator.share)await navigator.share({title:"একটি FriendZone চিঠি 💌",url});else await copyText(url,"status");}
+  catch(e){if(e.name!=="AbortError")window.prompt("লিংকটি কপি করো:",url);}
+}
+function newLetter(){ $("letterForm").reset();hide("result");show("home");show("birthdayGift");show("truthDare");history.replaceState(null,"",currentBase());openCreator();}
+
+/* Existing Birthday Gift feature */
+function displayBirthdayGift(data){
+  $("giftTitle").textContent="শুভ জন্মদিন, "+data.r+"! 🎂"; $("giftText").textContent=data.m;
+  $("giftFrom").textContent="ভালোবাসাসহ, "+(data.s||"তোমার বন্ধু")+" 💗";
+  show("giftResult"); $("giftResult").scrollIntoView({behavior:"smooth"});
+}
+$("giftForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  const data={s:safeText($("giftSender").value.trim(),50),r:safeText($("giftRecipient").value.trim(),50),m:safeText($("giftMessage").value.trim(),1500),expires:Date.now()+7*24*60*60*1000};
+  if(!data.r||!data.m)return;
+  history.replaceState(null,"",currentBase()+"#gift="+b64Encode(data)); displayBirthdayGift(data);
+  setStatus("giftStatus","গিফট তৈরি হয়েছে! লিংকটি পরীক্ষা করে তারপর শেয়ার করো।");
+});
+async function shareBirthdayGift(){
+  if(!location.hash.startsWith("#gift=")){setStatus("giftStatus","আগে গিফট তৈরি করো।");return;}
+  const url=location.href;
+  try{if(navigator.share)await navigator.share({title:"Birthday Gift 🎁",url});else await copyText(url,"giftStatus");}
+  catch(e){if(e.name!=="AbortError")window.prompt("লিংকটি কপি করো:",url);}
+}
+function resetBirthdayGift(){ $("giftForm").reset();hide("giftResult");history.replaceState(null,"",currentBase()); }
+function loadLegacyHash(){
+  if(location.hash.startsWith("#letter=")){
+    try{const d=b64Decode(location.hash.slice(8));if(typeof d.r==="string"&&typeof d.m==="string")showLetter({s:safeText(d.s,50),r:safeText(d.r,50),m:safeText(d.m,2500)});else setStatus("status","চিঠির লিংকটি সঠিক নয়।");}
+    catch(e){show("result");setStatus("status","চিঠির লিংকটি সঠিক নয়।");}
+  } else if(location.hash.startsWith("#gift=")){
+    try{const d=b64Decode(location.hash.slice(6));if(!d.r||!d.m||!d.expires)throw Error();if(Date.now()>d.expires){show("giftResult");setStatus("giftStatus","এই গিফটের ৭ দিনের মেয়াদ শেষ হয়েছে। 💗");}else displayBirthdayGift(d);}
+    catch(e){show("giftResult");setStatus("giftStatus","গিফটের লিংকটি সঠিক নয়।");}
   }
-  const url = location.href;
+}
+
+/* Truth or Dare — Supabase RPCs */
+let activeTdGameId=null, activeTdTruths=[], activeTdDares=[], activeTdChoice=null, activeTdPrompt=null;
+let ownerGameId=null, ownerToken=null, createdPlayerUrl="", createdOwnerUrl="";
+function parseLines(value,maxItems=20,maxLength=250){
+  const lines=value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+  if(lines.length<1||lines.length>maxItems)throw Error("প্রতি তালিকায় ১ থেকে "+maxItems+"টি লাইন দিতে হবে।");
+  if(lines.some(x=>x.length>maxLength))throw Error("প্রতিটি প্রশ্ন বা চ্যালেঞ্জ "+maxLength+" অক্ষরের মধ্যে রাখো।");
+  return lines;
+}
+function randomToken(){
+  const bytes=new Uint8Array(32); crypto.getRandomValues(bytes);
+  return Array.from(bytes,b=>b.toString(16).padStart(2,"0")).join("");
+}
+function requireSupabase(){
+  if(!supabaseClient)throw Error("প্রথমে HTML কোডে SUPABASE_URL ও SUPABASE_ANON_KEY বসাও।");
+}
+function tdHash(){ return location.hash; }
+function showOnlyTd(view){
+  ["tdSetup","tdCreated","tdPlayerView","tdOwnerView"].forEach(id=>hide(id)); show(view);
+}
+$("tdCreateForm").addEventListener("submit",async e=>{
+  e.preventDefault(); const button=$("tdCreateButton"); button.disabled=true;
   try{
-    if(navigator.share){
-      await navigator.share({title:"একটি FriendZone চিঠি 💌",url});
-    }else if(navigator.clipboard && window.isSecureContext){
-      await navigator.clipboard.writeText(url);
-      $("status").textContent = "লিংক কপি হয়েছে! বন্ধুকে পাঠাও 💗";
-    }else{
-      prompt("এই লিংকটি কপি করে বন্ধুকে পাঠাও:",url);
-    }
-  }catch(error){
-    if(error.name !== "AbortError"){
-      prompt("এই লিংকটি কপি করে বন্ধুকে পাঠাও:",url);
-    }
-  }
+    requireSupabase();
+    const truths=parseLines($("tdTruths").value,20,250);
+    const dares=parseLines($("tdDares").value,20,250);
+    const token=randomToken();
+    const payload={
+      p_creator_name:safeText($("tdOwnerName").value.trim(),50),
+      p_title:safeText($("tdGameTitle").value.trim(),80),
+      p_truth_questions:truths,p_dare_challenges:dares,p_owner_token:token
+    };
+    const {data,error}=await supabaseClient.rpc("td_create_game",payload);
+    if(error)throw error;
+    const gameId=typeof data==="string"?data:data.game_id;
+    if(!gameId)throw Error("গেম তৈরি হয়েছে কি না নিশ্চিত হওয়া যায়নি।");
+    ownerGameId=gameId;ownerToken=token;
+    createdPlayerUrl=currentBase()+"#td="+encodeURIComponent(gameId);
+    createdOwnerUrl=currentBase()+"#td-owner="+encodeURIComponent(gameId)+"&token="+encodeURIComponent(token);
+    $("tdPlayerLink").textContent=createdPlayerUrl;$("tdOwnerLink").textContent=createdOwnerUrl;
+    showOnlyTd("tdCreated");$("tdCreated").scrollIntoView({behavior:"smooth"});
+  }catch(err){setStatus("tdGlobalStatus","গেম তৈরি হয়নি: "+(err.message||"অজানা সমস্যা"));}
+  finally{button.disabled=false;}
+});
+async function copyTdLink(which){
+  const url=which==="owner"?createdOwnerUrl:createdPlayerUrl;
+  if(!url){setStatus("tdGlobalStatus","আগে গেম তৈরি করো।");return;}
+  try{await copyText(url,"tdGlobalStatus");}catch(e){}
 }
-function newLetter(){
-  $("letterForm").reset();
-  $("result").classList.add("hidden");
-  $("home").classList.remove("hidden");
-  $("otherFeatures").classList.remove("hidden");
-  history.replaceState(null,"",location.pathname);
-  openCreator();
+function resetTdCreator(){ $("tdCreateForm").reset();showOnlyTd("tdSetup");history.replaceState(null,"",currentBase()); }
+async function loadPlayerGame(gameId){
+  requireSupabase(); activeTdGameId=gameId;
+  const {data,error}=await supabaseClient.rpc("td_get_public_game",{p_game_id:gameId});
+  if(error)throw error;if(!data||!data.game_id)throw Error("গেমটি পাওয়া যায়নি অথবা মেয়াদ শেষ হয়েছে।");
+  activeTdTruths=data.truth_questions||[];activeTdDares=data.dare_challenges||[];
+  $("tdPlayerHeading").textContent="🎲 "+data.title;
+  $("tdPlayerIntro").textContent="গেম তৈরি করেছে: "+data.creator_name;
+  showOnlyTd("tdPlayerView");hide("tdChallenge");$("tdPlayForm").reset();
 }
-function loadSharedLetter(){
-  const prefix = "#letter=";
-  if(!location.hash.startsWith(prefix)) return;
+$("tdPlayForm").addEventListener("submit",e=>{
+  e.preventDefault();activeTdChoice=new FormData(e.currentTarget).get("tdChoice");
+  const list=activeTdChoice==="truth"?activeTdTruths:activeTdDares;
+  if(!list.length){setStatus("tdPlayStatus","এই গেমে প্রশ্ন বা চ্যালেঞ্জ নেই।");return;}
+  activeTdPrompt=list[Math.floor(Math.random()*list.length)];
+  $("tdChoiceBadge").textContent=activeTdChoice==="truth"?"💗 TRUTH":"🔥 DARE";
+  $("tdPrompt").textContent=activeTdPrompt;show("tdChallenge");
+  if(activeTdChoice==="truth"){show("tdAnswerForm");hide("tdDareForm");}
+  else{hide("tdAnswerForm");show("tdDareForm");}
+  $("tdChallenge").scrollIntoView({behavior:"smooth"});
+});
+$("tdAnswerForm").addEventListener("submit",async e=>{
+  e.preventDefault();const button=$("tdSubmitAnswer");button.disabled=true;
   try{
-    const data = decodeLetter(location.hash.slice(prefix.length));
-    if(typeof data.r !== "string" || typeof data.m !== "string") return;
-    showLetter({
-      s:safeText(data.s).slice(0,50),
-      r:safeText(data.r).slice(0,50),
-      m:safeText(data.m)
-    });
-  }catch(error){
-    $("status").textContent = "চিঠির লিংকটি সঠিক নয়।";
+    requireSupabase();
+    const answer=safeText($("tdAnswer").value.trim(),2000);if(!answer)throw Error("উত্তর লিখো।");
+    const {error}=await supabaseClient.rpc("td_submit_response",{p_game_id:activeTdGameId,p_player_name:safeText($("tdPlayerName").value.trim(),50),p_choice:"truth",p_prompt:activeTdPrompt,p_truth_answer:answer,p_dare_completed:false});
+    if(error)throw error;setStatus("tdPlayStatus","তোমার Truth উত্তর জমা হয়েছে। ধন্যবাদ! 💗");$("tdAnswerForm").reset();button.disabled=true;
+  }catch(err){setStatus("tdPlayStatus","উত্তর জমা হয়নি: "+(err.message||"আবার চেষ্টা করো।"));button.disabled=false;}
+});
+$("tdDareForm").addEventListener("submit",async e=>{
+  e.preventDefault();const button=$("tdSubmitDare");button.disabled=true;
+  try{
+    requireSupabase();
+    const {error}=await supabaseClient.rpc("td_submit_response",{p_game_id:activeTdGameId,p_player_name:safeText($("tdPlayerName").value.trim(),50),p_choice:"dare",p_prompt:activeTdPrompt,p_truth_answer:null,p_dare_completed:$("tdDareDone").checked});
+    if(error)throw error;setStatus("tdPlayStatus","তোমার Dare রেকর্ড জমা হয়েছে! 💗");button.disabled=true;
+  }catch(err){setStatus("tdPlayStatus","জমা হয়নি: "+(err.message||"আবার চেষ্টা করো।"));button.disabled=false;}
+});
+async function loadOwnerView(gameId,token){
+  requireSupabase();ownerGameId=gameId;ownerToken=token;
+  const {data,error}=await supabaseClient.rpc("td_get_owner_responses",{p_game_id:gameId,p_owner_token:token});
+  if(error)throw error;
+  showOnlyTd("tdOwnerView");
+  renderResponses(data||[]);
+}
+function renderResponses(rows){
+  const root=$("tdResponses");root.replaceChildren();
+  $("tdOwnerMeta").textContent="মোট জমা: "+rows.length;
+  if(!rows.length){const p=document.createElement("p");p.className="small";p.textContent="এখনো কেউ উত্তর জমা দেয়নি।";root.append(p);return;}
+  rows.forEach((r,i)=>{
+    const card=document.createElement("article");card.className="response";
+    const name=document.createElement("h3");name.textContent=(i+1)+". "+r.player_name;
+    const badge=document.createElement("span");badge.className="pill";badge.textContent=r.choice==="truth"?"💗 Truth":"🔥 Dare";
+    const prompt=document.createElement("p");prompt.textContent="প্রশ্ন/চ্যালেঞ্জ: "+r.prompt_text;
+    card.append(name,badge,prompt);
+    if(r.choice==="truth"){const ans=document.createElement("p");ans.textContent="উত্তর: "+(r.truth_answer||"—");card.append(ans);}
+    else{const done=document.createElement("p");done.textContent="চ্যালেঞ্জ সম্পন্ন: "+(r.dare_completed?"হ্যাঁ":"না / নিশ্চিত করেনি");card.append(done);}
+    const date=document.createElement("p");date.className="small";date.textContent="সময়: "+new Date(r.created_at).toLocaleString();card.append(date);root.append(card);
+  });
+}
+async function loadOwnerResponses(){
+  try{requireSupabase();setStatus("tdOwnerStatus","উত্তর লোড হচ্ছে…");
+    const {data,error}=await supabaseClient.rpc("td_get_owner_responses",{p_game_id:ownerGameId,p_owner_token:ownerToken});
+    if(error)throw error;renderResponses(data||[]);setStatus("tdOwnerStatus","উত্তর আপডেট হয়েছে।");
+  }catch(err){setStatus("tdOwnerStatus","উত্তর লোড হয়নি: "+(err.message||"আবার চেষ্টা করো।"));}
+}
+async function routeTdHash(){
+  const hash=location.hash;
+  if(hash.startsWith("#td-owner=")){
+    const raw=hash.slice("#td-owner=".length);const parts=new URLSearchParams(raw);
+    const id=parts.get("")||raw.split("&")[0];const token=parts.get("token");
+    // Parse the ID independently because the first fragment item is not a normal key=value pair.
+    const decodedId=decodeURIComponent(id||"");
+    if(!decodedId||!token)throw Error("Owner Link সঠিক নয়।");
+    await loadOwnerView(decodedId,token);return;
+  }
+  if(hash.startsWith("#td=")){
+    const id=decodeURIComponent(hash.slice(4));await loadPlayerGame(id);return;
   }
 }
-loadSharedLetter();
+window.addEventListener("load",async()=>{
+  loadLegacyHash();
+  try{if(location.hash.startsWith("#td-owner=")||location.hash.startsWith("#td="))await routeTdHash();}
+  catch(err){setStatus("tdGlobalStatus",err.message||"লিংকটি খোলা যায়নি।");showOnlyTd("tdSetup");}
+});
 </script>
 </body>
   </html>
