@@ -7,9 +7,6 @@
 <meta name="description" content="FriendZone — Love Letter, Friendship Letter, Birthday Gift, Friendship Quiz & Truth or Dare for friends.">
 <title>FriendZone 💗</title>
 
-<!-- Supabase JS Client CDN -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <style>
 *{box-sizing:border-box}
 :root{--pink:#f47caf;--purple:#ae83ed;--ink:#632d58}
@@ -95,10 +92,10 @@ a{overflow-wrap:anywhere}
 </header>
 
 <main>
- <!-- AUTH SECTION -->
+ <!-- AUTH / SIGN UP MODAL SECTION -->
  <section class="card" id="authSection">
   <h2 id="authTitle">👋 স্বাগতম FriendZone-এ</h2>
-  <p id="authDesc">শুরু করার আগে চাইলে সাইন-আপ করতে পারো অথবা স্কিপ করতে পারো।</p>
+  <p id="authDesc">শুরু করার আগে চাইলে সাইাইন-আপ করতে পারো অথবা স্কিপ করতে পারো।</p>
   <form id="authForm">
    <label for="authEmail" id="lblEmail">ইমেইল বা নাম (ঐচ্ছিক)</label>
    <input id="authEmail" maxlength="50" placeholder="yourname@gmail.com বা নাম">
@@ -217,7 +214,7 @@ a{overflow-wrap:anywhere}
   <p id="giftStatus" class="small" aria-live="polite"></p>
  </section>
 
- <!-- FRIENDSHIP QUIZ CREATOR -->
+ <!-- FRIENDSHIP QUIZ CREATOR (Super Easy) -->
  <section class="card hidden" id="quizCreator">
   <h2 id="qCreatorTitle">🫶 সহজ Friendship Quiz</h2>
   <p class="small" id="qCreatorDesc">সহজে প্রশ্ন ও উত্তর সেট করুন। বন্ধুকে লিংক পাঠান!</p>
@@ -228,6 +225,7 @@ a{overflow-wrap:anywhere}
   
   <div class="question-card">
    <h3>১. তোমার প্রিয় রং কী?</h3>
+   <input class="ez-q" value="তোমার প্রিয় রং কী?" type="hidden">
    <input class="ez-opt" placeholder="অপশন ১ (যেমন: লাল)" value="লাল">
    <input class="ez-opt" placeholder="অপশন ২ (যেমন: নীল)" value="নীল">
    <input class="ez-opt" placeholder="অপশন ৩ (যেমন: কালো)" value="কালো">
@@ -241,6 +239,7 @@ a{overflow-wrap:anywhere}
 
   <div class="question-card">
    <h3>২. তোমার প্রিয় খাবার কী?</h3>
+   <input class="ez-q" value="তোমার প্রিয় খাবার কী?" type="hidden">
    <input class="ez-opt2" placeholder="অপশন ১" value="বিরিয়ানি">
    <input class="ez-opt2" placeholder="অপশন ২" value="পিজ্জা">
    <input class="ez-opt2" placeholder="অপশন ৩" value="বার্গার">
@@ -314,7 +313,7 @@ a{overflow-wrap:anywhere}
  <!-- PRIVACY POLICY -->
  <section class="card hidden" id="privacyPage">
   <h2>🔒 Privacy Policy</h2>
-  <p id="privacyText">FriendZone-এ আমরা আপনার গোপনীয়তাকে গুরুত্ব দিই। আপনার তৈরিকৃত চিঠি বা ডেটা অনলাইনে সংরক্ষিত হয়।</p>
+  <p id="privacyText">FriendZone-এ আমরা আপনার গোপনীয়তাকে গুরুত্ব দিই। আপনার তৈরিকৃত চিঠি বা ডেটা শুধুমাত্র লিংকের মাধ্যমে আদান-প্রদান হয়।</p>
   <button class="secondary" onclick="goHome()" id="btnBackPrivacy">হোমে যাও</button>
  </section>
 
@@ -337,11 +336,6 @@ a{overflow-wrap:anywhere}
 
 <script>
 "use strict";
-
-// --- SUPABASE CONFIGURATION ---
-const SUPABASE_URL = 'YOUR_SUPABASE_URL'; // আপনার Supabase URL এখানে বসান
-const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'; // আপনার Supabase Anon Key এখানে বসান
-const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let currentLang = 'bn';
 const translations = {
@@ -429,18 +423,34 @@ function openPage(id){
  window.scrollTo({top:0,behavior:"smooth"});
 }
 
-function skipAuth(){ openPage("home"); }
-$("authForm").addEventListener("submit", e => { e.preventDefault(); openPage("home"); });
+function skipAuth(){
+ openPage("home");
+}
+
+$("authForm").addEventListener("submit", e => {
+ e.preventDefault();
+ openPage("home");
+});
 
 function goHome(){
  history.replaceState(null,"",location.pathname+location.search);
  openPage("home");
 }
 
+function encodeData(data){
+ return btoa(unescape(encodeURIComponent(JSON.stringify(data))));
+}
+function decodeData(value){
+ return JSON.parse(decodeURIComponent(escape(atob(value))));
+}
 function clean(value,max=2500){
  return String(value||"").trim().slice(0,max);
 }
-
+function safeHashLink(type,data){
+ const encoded=encodeData(data);
+ history.replaceState(null,"",location.pathname+location.search+"#"+type+"="+encoded);
+ return location.href;
+}
 async function shareCurrentLink(statusId){
  const url=location.href;
  try{
@@ -448,7 +458,7 @@ async function shareCurrentLink(statusId){
    await navigator.share({title:"FriendZone 💗",url});
   }else if(navigator.clipboard && window.isSecureContext){
    await navigator.clipboard.writeText(url);
-   $(statusId).textContent="লিংক কপি হয়েছে! বন্ধুকে পাঠাও 💗";
+   $(statusId).textContent="লিংক কপি হয়েছে! friend-কে পাঠাও 💗";
   }else{
    prompt("এই লিংকটি কপি করো:",url);
   }
@@ -457,59 +467,33 @@ async function shareCurrentLink(statusId){
  }
 }
 
-/* LOVE LETTER & FRIENDSHIP LETTER (SUPABASE INTEGRATED) */
+/* LOVE LETTER & FRIENDSHIP LETTER */
 let activeLetterData = null;
 
-$("letterForm").addEventListener("submit", async e => {
+$("letterForm").addEventListener("submit",e=>{
  e.preventDefault();
- const data = {
-  content_type: "letter",
-  sender: clean($("sender").value, 50),
-  recipient: clean($("recipient").value, 50),
-  message: clean($("message").value, 2500)
+ const data={
+  type:"letter",
+  s:clean($("sender").value,50),
+  r:clean($("recipient").value,50),
+  m:clean($("message").value,2500)
  };
- if(!data.recipient || !data.message) return;
-
- try {
-  const { data: inserted, error } = await supabaseClient
-    .from('shared_content')
-    .insert([data])
-    .select();
-
-  if(error) throw error;
-  const contentId = inserted[0].id;
-  
-  history.replaceState(null, "", location.pathname + location.search + "#id=" + contentId);
-  prepareEnvelope(data);
- } catch(err) {
-  alert("চিঠি সংরক্ষণ করা যায়নি।");
- }
+ if(!data.r||!data.m)return;
+ safeHashLink("letter",data);
+ prepareEnvelope(data);
 });
 
-$("friendLetterForm").addEventListener("submit", async e => {
+$("friendLetterForm").addEventListener("submit",e=>{
  e.preventDefault();
- const data = {
-  content_type: "fletter",
-  sender: clean($("fSender").value, 50),
-  recipient: clean($("fRecipient").value, 50),
-  message: clean($("fMessage").value, 2500)
+ const data={
+  type:"fletter",
+  s:clean($("fSender").value,50),
+  r:clean($("fRecipient").value,50),
+  m:clean($("fMessage").value,2500)
  };
- if(!data.recipient || !data.message) return;
-
- try {
-  const { data: inserted, error } = await supabaseClient
-    .from('shared_content')
-    .insert([data])
-    .select();
-
-  if(error) throw error;
-  const contentId = inserted[0].id;
-  
-  history.replaceState(null, "", location.pathname + location.search + "#id=" + contentId);
-  prepareEnvelope(data);
- } catch(err) {
-  alert("চিঠি সংরক্ষণ করা যায়নি।");
- }
+ if(!data.r||!data.m)return;
+ safeHashLink("letter",data);
+ prepareEnvelope(data);
 });
 
 function prepareEnvelope(data){
@@ -525,11 +509,11 @@ function openEnvelope(){
  const preview=$("letterPreview");
  preview.replaceChildren();
  const title=document.createElement("h3");
- title.textContent=(activeLetterData.content_type==="fletter"?"📜 প্রিয় বন্ধু ":"💌 প্রিয় ")+activeLetterData.recipient+",";
+ title.textContent=(activeLetterData.type==="fletter"?"📜 প্রিয় বন্ধু ":"💌 প্রিয় ")+activeLetterData.r+",";
  const message=document.createElement("p");
- message.textContent=activeLetterData.message;
+ message.textContent=activeLetterData.m;
  const from=document.createElement("p");
- from.textContent="ইতি, "+(activeLetterData.sender||"তোমার বন্ধু")+" 💗";
+ from.textContent="ইতি, "+(activeLetterData.s||"তোমার বন্ধু")+" 💗";
  preview.append(title,message,from);
  preview.classList.remove("hidden");
  $("letterActions").classList.remove("hidden");
@@ -542,49 +526,34 @@ function newLetter(){
  openPage("home");
 }
 
-/* BIRTHDAY GIFT (SUPABASE INTEGRATED) */
-$("giftForm").addEventListener("submit", async e => {
+/* BIRTHDAY GIFT */
+$("giftForm").addEventListener("submit",e=>{
  e.preventDefault();
- const data = {
-  content_type: "gift",
-  sender: clean($("giftSender").value, 50),
-  recipient: clean($("giftRecipient").value, 50),
-  message: clean($("giftMessage").value, 1500),
-  expires_at: new Date(Date.now() + 7*24*60*60*1000).toISOString()
+ const data={
+  s:clean($("giftSender").value,50),
+  r:clean($("giftRecipient").value,50),
+  m:clean($("giftMessage").value,1500),
+  expires:Date.now()+7*24*60*60*1000
  };
- if(!data.recipient || !data.message) return;
-
- try {
-  const { data: inserted, error } = await supabaseClient
-    .from('shared_content')
-    .insert([data])
-    .select();
-
-  if(error) throw error;
-  const contentId = inserted[0].id;
-
-  history.replaceState(null, "", location.pathname + location.search + "#id=" + contentId);
-  showGift(data);
-  $("giftStatus").textContent="গিফট তৈরি হয়েছে! এখন শেয়ার করতে পারো।";
- } catch(err) {
-  alert("গিফট সংরক্ষণ করা যায়নি।");
- }
+ if(!data.r||!data.m)return;
+ safeHashLink("gift",data);
+ showGift(data);
+ $("giftStatus").textContent="গিফট তৈরি হয়েছে! এখন শেয়ার করতে পারো।";
 });
 
 function showGift(data){
  openPage("giftResult");
- $("giftTitle").textContent="শুভ জন্মদিন, "+data.recipient+"! 🎂";
- $("giftText").textContent=data.message;
- $("giftFrom").textContent="ভালোবাসাসহ, "+(data.sender||"তোমার বন্ধু")+" 💗";
+ $("giftTitle").textContent="শুভ জন্মদিন, "+data.r+"! 🎂";
+ $("giftText").textContent=data.m;
+ $("giftFrom").textContent="ভালোবাসাসহ, "+(data.s||"তোমার বন্ধু")+" 💗";
 }
-
 function newGift(){
  $("giftForm").reset();
  history.replaceState(null,"",location.pathname+location.search);
  openPage("giftCreator");
 }
 
-/* FRIENDSHIP QUIZ */
+/* FRIENDSHIP QUIZ (EASY BUILDER) */
 function createEasyQuiz(){
  try{
   const q1 = "তোমার প্রিয় রং কী?";
@@ -603,65 +572,113 @@ function createEasyQuiz(){
     {q:q2, o:opts2, a:ans2}
    ]
   };
-  const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(data))));
-  history.replaceState(null,"",location.pathname+location.search+"#quiz="+encoded);
-  $("quizLinkText").textContent=location.href;
+  const url=safeHashLink("quiz",data);
+  $("quizLinkText").textContent=url;
   $("quizLinkResult").classList.remove("hidden");
   $("quizStatus").textContent="কুইজের লিংক তৈরি হয়েছে।";
  }catch(e){$("quizStatus").textContent="কুইজ তৈরি হয়নি।";}
 }
 
-/* ROUTING & FETCHING FROM SUPABASE */
-async function loadSharedLink(){
- const hash = location.hash;
- if(!hash) return;
- 
- try {
-  // যদি আইডি দিয়ে শেয়ার করা হয় (চিঠি বা গিফটের জন্য)
-  if(hash.startsWith("#id=")) {
-   const id = hash.slice(4);
-   const { data, error } = await supabaseClient
-     .from('shared_content')
-     .select('*')
-     .eq('id', id)
-     .single();
+$("quizAnswerForm").addEventListener("submit",e=>{
+ e.preventDefault();
+ if(!window.activeQuiz)return;
+ const answers=[...$("quizAnswerQuestions").querySelectorAll("input[type=radio]:checked")];
+ if(answers.length!==window.activeQuiz.questions.length){
+  $("quizScore").textContent="সব প্রশ্নের উত্তর দাও।";
+  $("quizScore").classList.remove("hidden");return;
+ }
+ const score=answers.reduce((n,input,i)=>n+(Number(input.value)===window.activeQuiz.questions[i].a?1:0),0);
+ $("quizScore").textContent=clean($("quizPlayer").value,50)+" — তোমার স্কোর: "+score+" / "+window.activeQuiz.questions.length;
+ $("quizScore").classList.remove("hidden");
+});
 
-   if(error || !data) throw error;
+/* TRUTH OR DARE */
+function createTD(){
+ const truths=$("truthList").value.split("\n").map(x=>clean(x,200)).filter(Boolean);
+ const dares=$("dareList").value.split("\n").map(x=>clean(x,200)).filter(Boolean);
+ if(!truths.length||!dares.length){
+  $("tdStatus").textContent="কমপক্ষে একটি Truth ও একটি Dare লিখো।";return;
+ }
+ const data={
+  title:clean($("tdTitle").value,80)||"Truth or Dare",
+  owner:clean($("tdOwner").value,50),
+  truths,dares
+ };
+ const url=safeHashLink("td",data);
+ $("tdLinkResult").textContent=url;
+ $("tdLinkResult").classList.remove("hidden");
+ $("tdStatus").textContent="গেমের লিংক তৈরি হয়েছে।";
+}
 
-   if(data.content_type === "letter" || data.content_type === "fletter") {
-    prepareEnvelope(data);
-   } else if(data.content_type === "gift") {
-    if(data.expires_at && new Date() > new Date(data.expires_at)) {
-     openPage("giftResult");
-     $("giftStatus").textContent="এই গিফটের মেয়াদ শেষ হয়েছে।";
-    } else {
-     showGift(data);
-    }
-   }
-  } 
-  // কুইজের জন্য আগের মতো হ্যাশ ডেটা
-  else if(hash.startsWith("#quiz=")) {
-   const d = JSON.parse(decodeURIComponent(escape(atob(hash.slice(6)))));
-   window.activeQuiz = d;
+function pickTD(type){
+ const game=window.activeTD;
+ if(!game)return;
+ if(type==="skip"){
+  $("tdPrompt").textContent="⏭️ এই রাউন্ড বাদ দেওয়া হয়েছে।";
+  $("tdPlayStatus").textContent="নতুন Truth বা Dare বেছে নাও।";
+ }else{
+  const list=type==="truth"?game.truths:game.dares;
+  if(!list||!list.length)return;
+  const promptText=list[Math.floor(Math.random()*list.length)];
+  $("tdPrompt").textContent=(type==="truth"?"💬 TRUTH: ":"🔥 DARE: ")+promptText;
+  $("tdPrompt").dataset.prompt=promptText;
+  $("tdPrompt").dataset.type=type;
+ }
+ $("tdPrompt").classList.remove("hidden");
+}
+
+function saveTDAnswer(){
+ if(!$("tdPlayer").value.trim()){
+  $("tdPlayStatus").textContent="আগে তোমার নাম লেখো।";return;
+ }
+ if(!$("tdPrompt").dataset.prompt){
+  $("tdPlayStatus").textContent="আগে Truth অথবা Dare বেছে নাও।";return;
+ }
+ $("tdPlayStatus").textContent="উত্তর সংরক্ষিত হয়েছে! ✅";
+}
+
+/* ROUTING */
+function loadSharedLink(){
+ const hash=location.hash;
+ if(!hash)return;
+ try{
+  if(hash.startsWith("#letter=")){
+   const d=decodeData(hash.slice(8));
+   if(typeof d.r==="string"&&typeof d.m==="string") prepareEnvelope(d);
+  }else if(hash.startsWith("#gift=")){
+   const d=decodeData(hash.slice(6));
+   if(Date.now()>d.expires){
+    openPage("giftResult");
+    $("giftStatus").textContent="এই গিফটের মেয়াদ শেষ হয়েছে।";
+   }else showGift(d);
+  }else if(hash.startsWith("#quiz=")){
+   const d=decodeData(hash.slice(6));
+   window.activeQuiz=d;
    openPage("quizPlay");
-   $("quizPlayTitle").textContent = d.title || "Friendship Quiz";
-   $("quizPlayOwner").textContent = d.owner ? "কুইজ তৈরি করেছেন: "+d.owner : "";
-   const container = $("quizAnswerQuestions");
+   $("quizPlayTitle").textContent=d.title||"Friendship Quiz";
+   $("quizPlayOwner").textContent=d.owner?"কুইজ তৈরি করেছেন: "+d.owner:"";
+   const container=$("quizAnswerQuestions");
    container.replaceChildren();
    d.questions.forEach((q,i)=>{
-    const card = document.createElement("div"); card.className = "question-card";
-    const h = document.createElement("h3"); h.textContent = (i+1)+". "+q.q; card.append(h);
+    const card=document.createElement("div");card.className="question-card";
+    const h=document.createElement("h3");h.textContent=(i+1)+". "+q.q;card.append(h);
     (q.o||[]).forEach((opt,j)=>{
-     const label = document.createElement("label"); label.className = "option";
-     const input = document.createElement("input"); input.type = "radio";
-     input.name = "quiz_"+i; input.value = j; input.required = true;
-     const span = document.createElement("span"); span.textContent = opt;
-     label.append(input, span); card.append(label);
+     const label=document.createElement("label");label.className="option";
+     const input=document.createElement("input");input.type="radio";
+     input.name="quiz_"+i;input.value=j;input.required=true;
+     const span=document.createElement("span");span.textContent=opt;
+     label.append(input,span);card.append(label);
     });
     container.append(card);
    });
+  }else if(hash.startsWith("#td=")){
+   const d=decodeData(hash.slice(4));
+   window.activeTD=d;
+   openPage("tdPlay");
+   $("tdPlayTitle").textContent=d.title||"Truth or Dare";
+   $("tdPlayOwner").textContent=d.owner?"গেম তৈরি করেছেন: "+d.owner:"";
   }
- } catch(e) {
+ }catch(e){
   openPage("home");
  }
 }
