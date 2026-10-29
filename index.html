@@ -2,11 +2,13 @@
 <html lang="bn">
 <head>
 <meta charset="UTF-8">
-<meta name="google-site-verification" content="qhxz5_4WMjZgk9lM3I-nYWYoRWNTcStRlQINdFATdys">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#ffe3ef">
-<meta name="description" content="FriendZone — বন্ধুদের জন্য Love Letter, Birthday Gift, Friendship Quiz ও Truth or Dare।">
+<meta name="description" content="FriendZone — Love Letter, Friendship Letter, Birthday Gift, Friendship Quiz & Truth or Dare for friends.">
 <title>FriendZone 💗</title>
+
+<!-- Supabase JS Client CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 *{box-sizing:border-box}
@@ -16,9 +18,14 @@ body{
  background:linear-gradient(135deg,#ffe3ef,#f0e4ff);
  min-height:100vh
 }
-header{text-align:center;padding:26px 12px 10px}
+header{text-align:center;padding:20px 12px 10px;position:relative}
 header h1{font-size:34px;margin:4px}
 header p{margin:8px}
+.lang-switch{
+ position:absolute;top:15px;right:15px;
+ background:#fff;border:1px solid #e9b8d5;padding:6px 12px;
+ border-radius:20px;cursor:pointer;font-weight:bold;color:var(--ink);font-size:13px
+}
 main{max-width:720px;margin:auto;padding:14px}
 .card{
  background:#ffffffdf;border:1px solid #fff;border-radius:22px;
@@ -55,14 +62,23 @@ label{display:block;font-weight:bold;margin-top:8px}
 .feature p{font-size:13px;line-height:1.5}
 .option{
  display:flex;align-items:flex-start;gap:9px;background:#fff5fa;
- padding:12px;border-radius:12px;margin:8px 0
+ padding:12px;border-radius:12px;margin:8px 0;cursor:pointer
 }
 .option input{width:auto;margin:3px 0}
 .question-card{border:1px solid #f1c8df;border-radius:14px;padding:14px;margin:12px 0}
+
+/* ENVELOPE STYLES */
+.envelope-container{
+ text-align:center;padding:30px;cursor:pointer;
+ background:#fff0f6;border:2px dashed #f47caf;border-radius:16px;
+ margin:15px 0;transition:transform 0.2s
+}
+.envelope-container:hover{transform:scale(1.02)}
+.envelope-icon{font-size:60px;margin-bottom:10px}
+
 footer{text-align:center;padding:22px;line-height:2}
 footer a{color:#874d8d;margin:0 6px}
 a{overflow-wrap:anywhere}
-hr{border:0;border-top:1px solid #f0cde0;margin:18px 0}
 @media(max-width:420px){
  header h1{font-size:29px}
  .card{padding:16px}
@@ -73,84 +89,118 @@ hr{border:0;border-top:1px solid #f0cde0;margin:18px 0}
 
 <body>
 <header>
- <h1>💗 FriendZone 💗</h1>
- <p>বন্ধুত্বের ছোট্ট সুন্দর একটা জায়গা ✨</p>
+ <button class="lang-switch" onclick="toggleLanguage()" id="langBtn">English</button>
+ <h1 id="siteTitle">💗 FriendZone 💗</h1>
+ <p id="siteSubtitle">বন্ধুত্বের ছোট্ট সুন্দর একটা জায়গা ✨</p>
 </header>
 
 <main>
- <section class="card" id="home">
-  <h2>🌷 Welcome to FriendZone</h2>
-  <p>বন্ধুদের সঙ্গে মনের কথা, স্মৃতি ও আনন্দ ভাগ করে নাও। 💗</p>
+ <!-- AUTH SECTION -->
+ <section class="card" id="authSection">
+  <h2 id="authTitle">👋 স্বাগতম FriendZone-এ</h2>
+  <p id="authDesc">শুরু করার আগে চাইলে সাইন-আপ করতে পারো অথবা স্কিপ করতে পারো।</p>
+  <form id="authForm">
+   <label for="authEmail" id="lblEmail">ইমেইল বা নাম (ঐচ্ছিক)</label>
+   <input id="authEmail" maxlength="50" placeholder="yourname@gmail.com বা নাম">
+   <button type="submit" id="btnLogin">লগইন / সাইন আপ করো</button>
+   <button type="button" class="secondary" onclick="skipAuth()" id="btnSkip">স্কিপ করুন (Skip)</button>
+  </form>
+ </section>
+
+ <!-- HOME DASHBOARD -->
+ <section class="card hidden" id="home">
+  <h2 id="homeWelcome">🌷 Welcome to FriendZone</h2>
+  <p id="homeDesc">বন্ধুদের সঙ্গে মনের কথা, স্মৃতি ও আনন্দ ভাগ করে নাও। 💗</p>
   <div class="feature-grid">
    <div class="feature">
     <div style="font-size:34px">💌</div>
-    <h3>Love Letter</h3>
-    <p>বন্ধুর জন্য মনের কথা লেখো।</p>
-    <button onclick="openPage('letterCreator')">চিঠি বানাও</button>
+    <h3 id="featLetterTitle">Love Letter</h3>
+    <p id="featLetterDesc">বন্ধুর জন্য মনের কথা লেখো।</p>
+    <button onclick="openPage('letterCreator')" id="btnLetter">চিঠি বানাও</button>
+   </div>
+   <div class="feature">
+    <div style="font-size:34px">📜</div>
+    <h3 id="featFriendLetterTitle">Friendship চিঠি</h3>
+    <p id="featFriendLetterDesc">বন্ধুত্বের বিশেষ বার্তা পাঠাও।</p>
+    <button onclick="openPage('friendLetterCreator')" id="btnFriendLetter">চিঠি বানাও</button>
    </div>
    <div class="feature">
     <div style="font-size:34px">🎁</div>
-    <h3>Birthday Gift</h3>
-    <p>জন্মদিনের ভার্চুয়াল উপহার।</p>
-    <button onclick="openPage('giftCreator')">গিফট বানাও</button>
+    <h3 id="featGiftTitle">Birthday Gift</h3>
+    <p id="featGiftDesc">জন্মদিনের ভার্চুয়াল উপহার।</p>
+    <button onclick="openPage('giftCreator')" id="btnGift">গিফট বানাও</button>
    </div>
    <div class="feature">
     <div style="font-size:34px">🫶</div>
-    <h3>Friendship Quiz</h3>
-    <p>দেখো বন্ধু তোমাকে কতটা চেনে!</p>
-    <button onclick="openPage('quizCreator')">কুইজ তৈরি</button>
+    <h3 id="featQuizTitle">Friendship Quiz</h3>
+    <p id="featQuizDesc">দেখো বন্ধু তোমাকে কতটা চেনে!</p>
+    <button onclick="openPage('quizCreator')" id="btnQuiz">কুইজ তৈরি</button>
    </div>
    <div class="feature">
     <div style="font-size:34px">🎯</div>
-    <h3>Truth or Dare</h3>
-    <p>বন্ধুদের সঙ্গে মজার খেলা।</p>
-    <button onclick="openPage('tdCreator')">গেম তৈরি</button>
-   </div>
-   <div class="feature">
-    <div style="font-size:34px">💔</div>
-    <h3>প্রাক্তনের জন্য শেষ মেসেজ</h3>
-    <p>এই ফিচারটি তৈরি হচ্ছে।</p>
-    <button disabled>Coming Soon</button>
+    <h3 id="featTdTitle">Truth or Dare</h3>
+    <p id="featTdDesc">বন্ধুদের সঙ্গে মজার খেলা।</p>
+    <button onclick="openPage('tdCreator')" id="btnTd">গেম তৈরি</button>
    </div>
   </div>
  </section>
 
  <!-- LOVE LETTER -->
  <section class="card hidden" id="letterCreator">
-  <h2>💌 তোমার চিঠি তৈরি করো</h2>
+  <h2 id="lCreatorTitle">💌 তোমার Love Letter তৈরি করো</h2>
   <form id="letterForm">
-   <label for="sender">তোমার নাম (ঐচ্ছিক)</label>
+   <label for="sender" id="lblSender">তোমার নাম (ঐচ্ছিক)</label>
    <input id="sender" maxlength="50" placeholder="তোমার নাম">
-   <label for="recipient">বন্ধুর নাম</label>
+   <label for="recipient" id="lblRecipient">বন্ধুর নাম</label>
    <input id="recipient" maxlength="50" required placeholder="যার জন্য চিঠি">
-   <label for="message">তোমার মনের কথা</label>
+   <label for="message" id="lblMessage">তোমার মনের কথা</label>
    <textarea id="message" maxlength="2500" required placeholder="প্রিয় বন্ধু, তোমাকে একটা কথা বলতে চাই..."></textarea>
-   <button type="submit">💖 চিঠি তৈরি করো</button>
-   <button type="button" class="secondary" onclick="goHome()">ফিরে যাও</button>
+   <button type="submit" id="btnMakeLetter">💖 চিঠি তৈরি করো</button>
+   <button type="button" class="secondary" onclick="goHome()" id="btnBack1">ফিরে যাও</button>
   </form>
  </section>
 
+ <!-- FRIENDSHIP LETTER -->
+ <section class="card hidden" id="friendLetterCreator">
+  <h2 id="flCreatorTitle">📜 তোমার Friendship চিঠি তৈরি করো</h2>
+  <form id="friendLetterForm">
+   <label for="fSender" id="lblFSender">তোমার নাম (ঐচ্ছিক)</label>
+   <input id="fSender" maxlength="50" placeholder="তোমার নাম">
+   <label for="fRecipient" id="lblFRecipient">বন্ধুর নাম</label>
+   <input id="fRecipient" maxlength="50" required placeholder="বন্ধুর নাম">
+   <label for="fMessage" id="lblFMessage">বন্ধুত্বের সুন্দর কথা</label>
+   <textarea id="fMessage" maxlength="2500" required placeholder="আমাদের বন্ধুত্বের এই দিনগুলো চিরকাল থাকুক..."></textarea>
+   <button type="submit" id="btnMakeFLetter">💛 চিঠি তৈরি করো</button>
+   <button type="button" class="secondary" onclick="goHome()" id="btnBack2">ফিরে যাও</button>
+  </form>
+ </section>
+
+ <!-- ENVELOPE / LETTER RESULT -->
  <section class="card hidden" id="letterResult">
-  <h2>💗 তোমার চিঠি</h2>
-  <div class="preview" id="letterPreview"></div>
-  <p class="small">লিংকে চিঠির লেখা থাকবে। ব্যক্তিগত তথ্য লিখবে না।</p>
-  <button onclick="shareCurrentLink('letterStatus')">🔗 শেয়ার করো</button>
-  <button class="secondary" onclick="newLetter()">নতুন চিঠি</button>
-  <p id="letterStatus" class="small" aria-live="polite"></p>
+  <div id="envelopeView" class="envelope-container" onclick="openEnvelope()">
+   <div class="envelope-icon">✉️</div>
+   <h3 id="envText">একটি নতুন চিঠি এসেছে! খুলতে টাচ করুন 💌</h3>
+  </div>
+  <div class="preview hidden" id="letterPreview"></div>
+  <div id="letterActions" class="hidden">
+   <button onclick="shareCurrentLink('letterStatus')" id="btnShareLetter">🔗 শেয়ার করো</button>
+   <button class="secondary" onclick="newLetter()" id="btnNewLetter">নতুন চিঠি</button>
+   <p id="letterStatus" class="small" aria-live="polite"></p>
+  </div>
  </section>
 
  <!-- BIRTHDAY GIFT -->
  <section class="card hidden" id="giftCreator">
-  <h2>🎁 Birthday Gift Creator</h2>
+  <h2 id="gCreatorTitle">🎁 Birthday Gift Creator</h2>
   <form id="giftForm">
-   <label for="giftSender">তোমার নাম (ঐচ্ছিক)</label>
+   <label for="giftSender" id="lblGSender">তোমার নাম (ঐচ্ছিক)</label>
    <input id="giftSender" maxlength="50" placeholder="তোমার নাম">
-   <label for="giftRecipient">বন্ধুর নাম</label>
+   <label for="giftRecipient" id="lblGRecipient">বন্ধুর নাম</label>
    <input id="giftRecipient" maxlength="50" required placeholder="বন্ধুর নাম">
-   <label for="giftMessage">জন্মদিনের শুভেচ্ছা</label>
+   <label for="giftMessage" id="lblGMessage">জন্মদিনের শুভেচ্ছা</label>
    <textarea id="giftMessage" maxlength="1500" required placeholder="শুভ জন্মদিন! 🎂"></textarea>
-   <button type="submit">🎁 গিফট তৈরি করো</button>
-   <button type="button" class="secondary" onclick="goHome()">ফিরে যাও</button>
+   <button type="submit" id="btnMakeGift">🎁 গিফট তৈরি করো</button>
+   <button type="button" class="secondary" onclick="goHome()" id="btnBack3">ফিরে যাও</button>
   </form>
  </section>
 
@@ -160,29 +210,54 @@ hr{border:0;border-top:1px solid #f0cde0;margin:18px 0}
    <h2 id="giftTitle"></h2>
    <p id="giftText" style="white-space:pre-wrap"></p>
    <p id="giftFrom"></p>
-   <p>🌸 তোমার দিনটি সুন্দর হোক! 🌸</p>
+   <p id="giftWish">🌸 তোমার দিনটি সুন্দর হোক! 🌸</p>
   </div>
-  <button onclick="shareCurrentLink('giftStatus')">🔗 গিফট শেয়ার করো</button>
-  <button class="secondary" onclick="newGift()">নতুন গিফট</button>
+  <button onclick="shareCurrentLink('giftStatus')" id="btnShareGift">🔗 গিফট শেয়ার করো</button>
+  <button class="secondary" onclick="newGift()" id="btnNewGift">নতুন গিফট</button>
   <p id="giftStatus" class="small" aria-live="polite"></p>
  </section>
 
  <!-- FRIENDSHIP QUIZ CREATOR -->
  <section class="card hidden" id="quizCreator">
-  <h2>🫶 Friendship Quiz</h2>
-  <p class="small">প্রশ্ন লিখে প্রতিটির সঠিক উত্তর বেছে নাও। বন্ধুরা উত্তর দিয়ে কতটি সঠিক করেছে তা দেখতে পারবে।</p>
-  <label for="quizTitle">কুইজের নাম</label>
+  <h2 id="qCreatorTitle">🫶 সহজ Friendship Quiz</h2>
+  <p class="small" id="qCreatorDesc">সহজে প্রশ্ন ও উত্তর সেট করুন। বন্ধুকে লিংক পাঠান!</p>
+  <label for="quizTitle" id="lblQTitle">কুইজের নাম</label>
   <input id="quizTitle" maxlength="80" placeholder="যেমন: আমাকে কতটা চেনো?">
-  <label for="quizOwner">তোমার নাম</label>
+  <label for="quizOwner" id="lblQOwner">তোমার নাম</label>
   <input id="quizOwner" maxlength="50" placeholder="তোমার নাম">
-  <div id="quizQuestions"></div>
-  <button type="button" class="light" onclick="addQuizQuestion()">➕ প্রশ্ন যোগ করো</button>
-  <button type="button" onclick="createQuiz()">🔗 কুইজ লিংক তৈরি করো</button>
-  <button type="button" class="secondary" onclick="goHome()">ফিরে যাও</button>
+  
+  <div class="question-card">
+   <h3>১. তোমার প্রিয় রং কী?</h3>
+   <input class="ez-opt" placeholder="অপশন ১ (যেমন: লাল)" value="লাল">
+   <input class="ez-opt" placeholder="অপশন ২ (যেমন: নীল)" value="নীল">
+   <input class="ez-opt" placeholder="অপশন ৩ (যেমন: কালো)" value="কালো">
+   <label>সঠিক উত্তর কোনটি?</label>
+   <select class="ez-ans">
+    <option value="0">অপশন ১</option>
+    <option value="1">অপশন ২</option>
+    <option value="2">অপশন ৩</option>
+   </select>
+  </div>
+
+  <div class="question-card">
+   <h3>২. তোমার প্রিয় খাবার কী?</h3>
+   <input class="ez-opt2" placeholder="অপশন ১" value="বিরিয়ানি">
+   <input class="ez-opt2" placeholder="অপশন ২" value="পিজ্জা">
+   <input class="ez-opt2" placeholder="অপশন ৩" value="বার্গার">
+   <label>সঠিক উত্তর কোনটি?</label>
+   <select class="ez-ans2">
+    <option value="0">অপশন ১</option>
+    <option value="1">অপশন ২</option>
+    <option value="2">অপশন ৩</option>
+   </select>
+  </div>
+
+  <button type="button" onclick="createEasyQuiz()" id="btnMakeQuiz">🔗 কুইজ লিংক তৈরি করো</button>
+  <button type="button" class="secondary" onclick="goHome()" id="btnBack4">ফিরে যাও</button>
   <p id="quizStatus" class="small" aria-live="polite"></p>
   <div id="quizLinkResult" class="hidden">
    <div class="preview" id="quizLinkText"></div>
-   <button onclick="shareCurrentLink('quizStatus')">লিংক শেয়ার করো</button>
+   <button onclick="shareCurrentLink('quizStatus')" id="btnShareQuiz">লিংক শেয়ার করো</button>
   </div>
  </section>
 
@@ -191,30 +266,29 @@ hr{border:0;border-top:1px solid #f0cde0;margin:18px 0}
   <h2 id="quizPlayTitle">🫶 Friendship Quiz</h2>
   <p id="quizPlayOwner" class="small"></p>
   <form id="quizAnswerForm">
-   <label for="quizPlayer">তোমার নাম</label>
+   <label for="quizPlayer" id="lblPlayerName">তোমার নাম</label>
    <input id="quizPlayer" maxlength="50" required placeholder="তোমার নাম">
    <div id="quizAnswerQuestions"></div>
-   <button type="submit">উত্তর জমা দিয়ে স্কোর দেখো</button>
+   <button type="submit" id="btnSubmitQuiz">উত্তর জমা দিয়ে স্কোর দেখো</button>
   </form>
   <div id="quizScore" class="hidden preview"></div>
-  <p class="small">এই সংস্করণে উত্তর ও স্কোর তোমার ডিভাইসে দেখানো হয়; নির্মাতার কাছে অনলাইনে জমা হয় না।</p>
-  <button class="secondary" onclick="goHome()">হোমে যাও</button>
+  <button class="secondary" onclick="goHome()" id="btnBackHome1">হোমে যাও</button>
  </section>
 
  <!-- TRUTH OR DARE -->
  <section class="card hidden" id="tdCreator">
-  <h2>🎯 Truth or Dare</h2>
-  <p>নিজের Truth ও Dare যোগ করো। বন্ধুদের সঙ্গে লিংক শেয়ার করো।</p>
-  <label for="tdTitle">গেমের নাম</label>
+  <h2 id="tdCreatorTitle">🎯 Truth or Dare</h2>
+  <p id="tdDesc">নিজের Truth ও Dare যোগ করে গেম তৈরি করো।</p>
+  <label for="tdTitle" id="lblTdTitle">গেমের নাম</label>
   <input id="tdTitle" maxlength="80" placeholder="যেমন: Friends Night">
-  <label for="tdOwner">তোমার নাম</label>
+  <label for="tdOwner" id="lblTdOwner">তোমার নাম</label>
   <input id="tdOwner" maxlength="50" placeholder="তোমার নাম">
-  <label for="truthList">Truth প্রশ্ন (প্রতিটি আলাদা লাইনে)</label>
-  <textarea id="truthList" maxlength="3000" placeholder="তোমার সবচেয়ে মজার স্মৃতি কী?&#10;কোন বন্ধুকে সবচেয়ে বিশ্বাস করো?"></textarea>
-  <label for="dareList">Dare চ্যালেঞ্জ (প্রতিটি আলাদা লাইনে)</label>
-  <textarea id="dareList" maxlength="3000" placeholder="একটি মজার ইমোজি পাঠাও।&#10;একটি মজার গান গাও।"></textarea>
-  <button onclick="createTD()" type="button">🔗 গেমের লিংক তৈরি করো</button>
-  <button class="secondary" onclick="goHome()">ফিরে যাও</button>
+  <label for="truthList" id="lblTruths">Truth প্রশ্ন (প্রতিটি আলাদা লাইনে)</label>
+  <textarea id="truthList" maxlength="3000" placeholder="তোমার সবচেয়ে মজার স্মৃতি কী?"></textarea>
+  <label for="dareList" id="lblDares">Dare চ্যালেঞ্জ (প্রতিটি আলাদা লাইনে)</label>
+  <textarea id="dareList" maxlength="3000" placeholder="একটি মজার ইমোজি পাঠাও।"></textarea>
+  <button onclick="createTD()" type="button" id="btnMakeTD">🔗 গেমের লিংক তৈরি করো</button>
+  <button class="secondary" onclick="goHome()" id="btnBack5">ফিরে যাও</button>
   <p id="tdStatus" class="small" aria-live="polite"></p>
   <div id="tdLinkResult" class="hidden preview"></div>
  </section>
@@ -222,66 +296,130 @@ hr{border:0;border-top:1px solid #f0cde0;margin:18px 0}
  <section class="card hidden" id="tdPlay">
   <h2 id="tdPlayTitle">🎯 Truth or Dare</h2>
   <p id="tdPlayOwner" class="small"></p>
-  <label for="tdPlayer">তোমার নাম</label>
+  <label for="tdPlayer" id="lblTdPlayer">তোমার নাম</label>
   <input id="tdPlayer" maxlength="50" placeholder="তোমার নাম">
   <div class="feature-grid">
-   <button onclick="pickTD('truth')">💬 Truth</button>
-   <button onclick="pickTD('dare')">🔥 Dare</button>
+   <button onclick="pickTD('truth')" id="btnTruth">💬 Truth</button>
+   <button onclick="pickTD('dare')" id="btnDare">🔥 Dare</button>
   </div>
   <div id="tdPrompt" class="preview hidden"></div>
-  <label for="tdAnswer">তোমার উত্তর (ঐচ্ছিক)</label>
+  <label for="tdAnswer" id="lblTdAnswer">তোমার উত্তর (ঐচ্ছিক)</label>
   <textarea id="tdAnswer" maxlength="1000" placeholder="তোমার উত্তর লেখো..."></textarea>
-  <button onclick="saveTDAnswer()">উত্তর দেখাও / সংরক্ষণ করো</button>
-  <button class="secondary" onclick="pickTD('skip')">⏭️ Skip</button>
+  <button onclick="saveTDAnswer()" id="btnSaveTD">সংরক্ষণ করো</button>
+  <button class="secondary" onclick="pickTD('skip')" id="btnSkipTD">⏭️ Skip</button>
   <p id="tdPlayStatus" class="small" aria-live="polite"></p>
-  <p class="small">এই সংস্করণে উত্তর এই ডিভাইসে থাকে; নির্মাতার কাছে অনলাইনে জমা হয় না।</p>
-  <button class="secondary" onclick="goHome()">হোমে যাও</button>
+  <button class="secondary" onclick="goHome()" id="btnBackHome2">হোমে যাও</button>
  </section>
 
  <!-- PRIVACY POLICY -->
  <section class="card hidden" id="privacyPage">
   <h2>🔒 Privacy Policy</h2>
-  <p>FriendZone-এ আমরা ব্যবহারকারীর গোপনীয়তাকে গুরুত্ব দেওয়ার চেষ্টা করি। এই পৃষ্ঠাটি ওয়েবসাইটে ব্যবহৃত প্রকৃত প্রযুক্তি ও ডেটা সংগ্রহের পদ্ধতির সঙ্গে মিলিয়ে হালনাগাদ রাখতে হবে।</p>
-  <h3>Information you provide</h3>
-  <p>আপনি চিঠি, উপহার বা অন্যান্য ফিচারে যে লেখা প্রবেশ করান, তা লিংকের মধ্যে অন্তর্ভুক্ত হতে পারে। লিংকটি অন্য কাউকে পাঠালে সেই ব্যক্তি লেখাটি দেখতে পারবেন। গোপন তথ্য লিখবেন না।</p>
-  <h3>Cookies and advertising</h3>
-  <p>ভবিষ্যতে Google AdSense যুক্ত করলে Google ও তার অংশীদারেরা বিজ্ঞাপন দেখাতে cookies বা অনুরূপ প্রযুক্তি ব্যবহার করতে পারে। AdSense চালু করার আগে প্রযোজ্য Google নীতি এবং আপনার সাইটের বাস্তব সেটআপ অনুযায়ী এই অংশটি যাচাই করুন।</p>
-  <h3>Contact</h3>
-  <p>Privacy Policy বিষয়ে প্রশ্ন থাকলে ইমেইল করুন:
-   <a href="mailto:funwithfriendzone@gmail.com">funwithfriendzone@gmail.com</a>
-  </p>
-  <button class="secondary" onclick="goHome()">হোমে যাও</button>
+  <p id="privacyText">FriendZone-এ আমরা আপনার গোপনীয়তাকে গুরুত্ব দিই। আপনার তৈরিকৃত চিঠি বা ডেটা অনলাইনে সংরক্ষিত হয়।</p>
+  <button class="secondary" onclick="goHome()" id="btnBackPrivacy">হোমে যাও</button>
  </section>
 
  <!-- CONTACT -->
  <section class="card hidden" id="contactPage">
   <h2>📩 Contact Us</h2>
-  <p>প্রশ্ন, পরামর্শ বা ওয়েবসাইটে সমস্যা জানাতে আমাদের ইমেইল করুন।</p>
-  <p><strong>Email:</strong>
-   <a href="mailto:funwithfriendzone@gmail.com">funwithfriendzone@gmail.com</a>
-  </p>
-  <a href="mailto:funwithfriendzone@gmail.com">
-   <button>✉️ ইমেইল পাঠাও</button>
-  </a>
-  <button class="secondary" onclick="goHome()">হোমে যাও</button>
+  <p id="contactText">প্রশ্ন বা পরামর্শের জন্য আমাদের ইমেইল করুন:</p>
+  <p><strong>Email:</strong> <a href="mailto:funwithfriendzone@gmail.com">funwithfriendzone@gmail.com</a></p>
+  <button class="secondary" onclick="goHome()" id="btnBackContact">হোমে যাও</button>
  </section>
 </main>
 
 <footer>
- Made with 💗 for friends
+ <span id="footerText">Made with 💗 for friends</span>
  <div>
-  <a href="#privacy" onclick="openPage('privacyPage');return false">Privacy Policy</a>
-  <a href="#contact" onclick="openPage('contactPage');return false">Contact Us</a>
+  <a href="#privacy" onclick="openPage('privacyPage');return false" id="linkPrivacy">Privacy Policy</a>
+  <a href="#contact" onclick="openPage('contactPage');return false" id="linkContact">Contact Us</a>
  </div>
- <p class="small">FriendZone 💗</p>
 </footer>
 
 <script>
 "use strict";
 
+// --- SUPABASE CONFIGURATION ---
+const SUPABASE_URL = 'YOUR_SUPABASE_URL'; // আপনার Supabase URL এখানে বসান
+const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'; // আপনার Supabase Anon Key এখানে বসান
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let currentLang = 'bn';
+const translations = {
+ bn: {
+  siteTitle: "💗 FriendZone 💗",
+  siteSubtitle: "বন্ধুত্বের ছোট্ট সুন্দর একটা জায়গা ✨",
+  authTitle: "👋 স্বাগতম FriendZone-এ",
+  authDesc: "শুরু করার আগে চাইলে সাইন-আপ করতে পারো অথবা স্কিপ করতে পারো।",
+  lblEmail: "ইমেইল বা নাম (ঐচ্ছিক)",
+  btnLogin: "লগইন / সাইন আপ করো",
+  btnSkip: "স্কিপ করুন (Skip)",
+  homeWelcome: "🌷 Welcome to FriendZone",
+  homeDesc: "বন্ধুদের সঙ্গে মনের কথা, স্মৃতি ও আনন্দ ভাগ করে নাও। 💗",
+  featLetterTitle: "Love Letter",
+  featLetterDesc: "বন্ধুর জন্য মনের কথা লেখো।",
+  btnLetter: "চিঠি বানাও",
+  featFriendLetterTitle: "Friendship চিঠি",
+  featFriendLetterDesc: "বন্ধুত্বের বিশেষ বার্তা পাঠাও।",
+  btnFriendLetter: "চিঠি বানাও",
+  featGiftTitle: "Birthday Gift",
+  featGiftDesc: "জন্মদিনের ভার্চুয়াল উপহার।",
+  btnGift: "গিফট বানাও",
+  featQuizTitle: "Friendship Quiz",
+  featQuizDesc: "দেখো বন্ধু তোমাকে কতটা চেনে!",
+  btnQuiz: "কুইজ তৈরি",
+  featTdTitle: "Truth or Dare",
+  featTdDesc: "বন্ধুদের সঙ্গে মজার খেলা।",
+  btnTd: "গেম তৈরি",
+  envText: "একটি নতুন চিঠি এসেছে! খুলতে টাচ করুন 💌",
+  footerText: "Made with 💗 for friends",
+  linkPrivacy: "Privacy Policy",
+  linkContact: "Contact Us"
+ },
+ en: {
+  siteTitle: "💗 FriendZone 💗",
+  siteSubtitle: "A sweet little place for friendship ✨",
+  authTitle: "👋 Welcome to FriendZone",
+  authDesc: "You can sign up or simply skip to continue.",
+  lblEmail: "Email or Name (Optional)",
+  btnLogin: "Login / Sign Up",
+  btnSkip: "Skip",
+  homeWelcome: "🌷 Welcome to FriendZone",
+  homeDesc: "Share your thoughts, memories, and joy with friends. 💗",
+  featLetterTitle: "Love Letter",
+  featLetterDesc: "Write heartfelt words for a friend.",
+  btnLetter: "Create Letter",
+  featFriendLetterTitle: "Friendship Letter",
+  featFriendLetterDesc: "Send special friendship messages.",
+  btnFriendLetter: "Create Letter",
+  featGiftTitle: "Birthday Gift",
+  featGiftDesc: "Virtual birthday surprises.",
+  btnGift: "Create Gift",
+  featQuizTitle: "Friendship Quiz",
+  featQuizDesc: "See how well your friend knows you!",
+  btnQuiz: "Create Quiz",
+  featTdTitle: "Truth or Dare",
+  featTdDesc: "Fun game to play with friends.",
+  btnTd: "Create Game",
+  envText: "A new letter has arrived! Touch to open 💌",
+  footerText: "Made with 💗 for friends",
+  linkPrivacy: "Privacy Policy",
+  linkContact: "Contact Us"
+ }
+};
+
+function toggleLanguage(){
+ currentLang = currentLang === 'bn' ? 'en' : 'bn';
+ document.getElementById('langBtn').textContent = currentLang === 'bn' ? 'English' : 'বাংলা';
+ const t = translations[currentLang];
+ for(let key in t){
+  const el = document.getElementById(key);
+  if(el) el.textContent = t[key];
+ }
+}
+
 const $ = id => document.getElementById(id);
 const PAGE_IDS = [
- "home","letterCreator","letterResult","giftCreator","giftResult",
+ "authSection","home","letterCreator","friendLetterCreator","letterResult","giftCreator","giftResult",
  "quizCreator","quizPlay","tdCreator","tdPlay","privacyPage","contactPage"
 ];
 
@@ -290,24 +428,19 @@ function openPage(id){
  $(id).classList.remove("hidden");
  window.scrollTo({top:0,behavior:"smooth"});
 }
+
+function skipAuth(){ openPage("home"); }
+$("authForm").addEventListener("submit", e => { e.preventDefault(); openPage("home"); });
+
 function goHome(){
  history.replaceState(null,"",location.pathname+location.search);
  openPage("home");
 }
-function encodeData(data){
- return btoa(unescape(encodeURIComponent(JSON.stringify(data))));
-}
-function decodeData(value){
- return JSON.parse(decodeURIComponent(escape(atob(value))));
-}
+
 function clean(value,max=2500){
  return String(value||"").trim().slice(0,max);
 }
-function safeHashLink(type,data){
- const encoded=encodeData(data);
- history.replaceState(null,"",location.pathname+location.search+"#"+type+"="+encoded);
- return location.href;
-}
+
 async function shareCurrentLink(statusId){
  const url=location.href;
  try{
@@ -324,61 +457,127 @@ async function shareCurrentLink(statusId){
  }
 }
 
-/* LOVE LETTER */
-$("letterForm").addEventListener("submit",e=>{
+/* LOVE LETTER & FRIENDSHIP LETTER (SUPABASE INTEGRATED) */
+let activeLetterData = null;
+
+$("letterForm").addEventListener("submit", async e => {
  e.preventDefault();
- const data={
-  s:clean($("sender").value,50),
-  r:clean($("recipient").value,50),
-  m:clean($("message").value,2500)
+ const data = {
+  content_type: "letter",
+  sender: clean($("sender").value, 50),
+  recipient: clean($("recipient").value, 50),
+  message: clean($("message").value, 2500)
  };
- if(!data.r||!data.m)return;
- try{
-  safeHashLink("letter",data);
-  showLetter(data);
-  $("letterStatus").textContent="চিঠি তৈরি হয়েছে। লিংক শেয়ার করতে পারো।";
- }catch(e){alert("চিঠি তৈরি করা যায়নি।");}
+ if(!data.recipient || !data.message) return;
+
+ try {
+  const { data: inserted, error } = await supabaseClient
+    .from('shared_content')
+    .insert([data])
+    .select();
+
+  if(error) throw error;
+  const contentId = inserted[0].id;
+  
+  history.replaceState(null, "", location.pathname + location.search + "#id=" + contentId);
+  prepareEnvelope(data);
+ } catch(err) {
+  alert("চিঠি সংরক্ষণ করা যায়নি।");
+ }
 });
-function showLetter(data){
+
+$("friendLetterForm").addEventListener("submit", async e => {
+ e.preventDefault();
+ const data = {
+  content_type: "fletter",
+  sender: clean($("fSender").value, 50),
+  recipient: clean($("fRecipient").value, 50),
+  message: clean($("fMessage").value, 2500)
+ };
+ if(!data.recipient || !data.message) return;
+
+ try {
+  const { data: inserted, error } = await supabaseClient
+    .from('shared_content')
+    .insert([data])
+    .select();
+
+  if(error) throw error;
+  const contentId = inserted[0].id;
+  
+  history.replaceState(null, "", location.pathname + location.search + "#id=" + contentId);
+  prepareEnvelope(data);
+ } catch(err) {
+  alert("চিঠি সংরক্ষণ করা যায়নি।");
+ }
+});
+
+function prepareEnvelope(data){
+ activeLetterData = data;
  openPage("letterResult");
+ $("envelopeView").classList.remove("hidden");
+ $("letterPreview").classList.add("hidden");
+ $("letterActions").classList.add("hidden");
+}
+
+function openEnvelope(){
+ $("envelopeView").classList.add("hidden");
  const preview=$("letterPreview");
  preview.replaceChildren();
  const title=document.createElement("h3");
- title.textContent="💌 প্রিয় "+data.r+",";
+ title.textContent=(activeLetterData.content_type==="fletter"?"📜 প্রিয় বন্ধু ":"💌 প্রিয় ")+activeLetterData.recipient+",";
  const message=document.createElement("p");
- message.textContent=data.m;
+ message.textContent=activeLetterData.message;
  const from=document.createElement("p");
- from.textContent="ইতি, "+(data.s||"তোমার বন্ধু")+" 💗";
+ from.textContent="ইতি, "+(activeLetterData.sender||"তোমার বন্ধু")+" 💗";
  preview.append(title,message,from);
-}
-function newLetter(){
- $("letterForm").reset();
- history.replaceState(null,"",location.pathname+location.search);
- openPage("letterCreator");
+ preview.classList.remove("hidden");
+ $("letterActions").classList.remove("hidden");
 }
 
-/* BIRTHDAY GIFT */
-$("giftForm").addEventListener("submit",e=>{
+function newLetter(){
+ $("letterForm").reset();
+ $("friendLetterForm").reset();
+ history.replaceState(null,"",location.pathname+location.search);
+ openPage("home");
+}
+
+/* BIRTHDAY GIFT (SUPABASE INTEGRATED) */
+$("giftForm").addEventListener("submit", async e => {
  e.preventDefault();
- const data={
-  s:clean($("giftSender").value,50),
-  r:clean($("giftRecipient").value,50),
-  m:clean($("giftMessage").value,1500),
-  expires:Date.now()+7*24*60*60*1000
+ const data = {
+  content_type: "gift",
+  sender: clean($("giftSender").value, 50),
+  recipient: clean($("giftRecipient").value, 50),
+  message: clean($("giftMessage").value, 1500),
+  expires_at: new Date(Date.now() + 7*24*60*60*1000).toISOString()
  };
- if(!data.r||!data.m)return;
- try{
-  safeHashLink("gift",data);
+ if(!data.recipient || !data.message) return;
+
+ try {
+  const { data: inserted, error } = await supabaseClient
+    .from('shared_content')
+    .insert([data])
+    .select();
+
+  if(error) throw error;
+  const contentId = inserted[0].id;
+
+  history.replaceState(null, "", location.pathname + location.search + "#id=" + contentId);
   showGift(data);
   $("giftStatus").textContent="গিফট তৈরি হয়েছে! এখন শেয়ার করতে পারো।";
- }catch(e){alert("গিফট তৈরি করা যায়নি।");}
+ } catch(err) {
+  alert("গিফট সংরক্ষণ করা যায়নি।");
+ }
 });
+
 function showGift(data){
  openPage("giftResult");
- $("giftTitle").textContent="শুভ জন্মদিন, "+data.r+"! 🎂";
- $("giftText").textContent=data.m;
- $("giftFrom").textContent="ভালোবাসাসহ, "+(data.s||"তোমার বন্ধু")+" 💗";
+ $("giftTitle").textContent="শুভ জন্মদিন, "+data.recipient+"! 🎂";
+ $("giftText").textContent=data.message;
+ $("giftFrom").textContent="ভালোবাসাসহ, "+(data.sender||"তোমার বন্ধু")+" 💗";
 }
+
 function newGift(){
  $("giftForm").reset();
  history.replaceState(null,"",location.pathname+location.search);
@@ -386,203 +585,88 @@ function newGift(){
 }
 
 /* FRIENDSHIP QUIZ */
-const suggestedQuestions=[
- {q:"আমার প্রিয় রং কী?",o:["লাল","নীল","কালো","গোলাপি"],a:0},
- {q:"আমি অবসরে কী করতে পছন্দ করি?",o:["গান শুনতে","ঘুমাতে","ঘুরতে","বই পড়তে"],a:0},
- {q:"আমার প্রিয় খাবার কী?",o:["পিজ্জা","বার্গার","বিরিয়ানি","আইসক্রিম"],a:2},
- {q:"আমি কেমন বন্ধু পছন্দ করি?",o:["সৎ","মজার","যত্নশীল","সবগুলো"],a:3}
-];
-function addQuizQuestion(q="",options=["","","",""],answer=0){
- const wrap=document.createElement("div");
- wrap.className="question-card";
- const number=$("quizQuestions").children.length+1;
- const heading=document.createElement("h3");
- heading.textContent="প্রশ্ন "+number;
- const question=document.createElement("input");
- question.maxLength=200;question.required=true;
- question.placeholder="প্রশ্ন লিখো";question.value=q;
- question.className="q-text";
- wrap.append(heading,question);
- const optionInputs=[];
- options.forEach((opt,i)=>{
-  const input=document.createElement("input");
-  input.maxLength=100;input.required=true;
-  input.placeholder="অপশন "+(i+1);input.value=opt;
-  input.className="q-option";
-  wrap.append(input);optionInputs.push(input);
- });
- const label=document.createElement("label");
- label.textContent="সঠিক উত্তর";
- const select=document.createElement("select");
- select.className="q-answer";
- ["অপশন ১","অপশন ২","অপশন ৩","অপশন ৪"].forEach((t,i)=>{
-  const op=document.createElement("option");
-  op.value=i;op.textContent=t;select.append(op);
- });
- select.value=String(answer);
- wrap.append(label,select);
- const remove=document.createElement("button");
- remove.type="button";remove.className="secondary";remove.textContent="প্রশ্ন বাদ দাও";
- remove.onclick=()=>{wrap.remove();renumberQuestions();};
- wrap.append(remove);
- $("quizQuestions").append(wrap);
-}
-function renumberQuestions(){
- [...$("quizQuestions").children].forEach((el,i)=>{
-  el.querySelector("h3").textContent="প্রশ্ন "+(i+1);
- });
-}
-function loadSuggestedQuestions(){
- $("quizQuestions").replaceChildren();
- suggestedQuestions.forEach(q=>addQuizQuestion(q.q,q.o,q.a));
-}
-function collectQuiz(){
- return [...$("quizQuestions").children].map(card=>{
-  const q=clean(card.querySelector(".q-text").value,200);
-  const opts=[...card.querySelectorAll(".q-option")].map(x=>clean(x.value,100));
-  const answer=Number(card.querySelector(".q-answer").value);
-  if(!q||opts.some(x=>!x))throw Error("সব প্রশ্ন ও অপশন পূরণ করো।");
-  return {q,o:opts,a:answer};
- });
-}
-function createQuiz(){
+function createEasyQuiz(){
  try{
-  const questions=collectQuiz();
-  if(!questions.length)throw Error("কমপক্ষে একটি প্রশ্ন যোগ করো।");
-  if(questions.length>20)throw Error("সর্বোচ্চ ২০টি প্রশ্ন যোগ করা যাবে।");
+  const q1 = "তোমার প্রিয় রং কী?";
+  const opts1 = [...document.querySelectorAll(".ez-opt")].map(x=>clean(x.value,50));
+  const ans1 = Number(document.querySelector(".ez-ans").value);
+
+  const q2 = "তোমার প্রিয় খাবার কী?";
+  const opts2 = [...document.querySelectorAll(".ez-opt2")].map(x=>clean(x.value,50));
+  const ans2 = Number(document.querySelector(".ez-ans2").value);
+
   const data={
    title:clean($("quizTitle").value,80)||"আমাকে কতটা চেনো?",
    owner:clean($("quizOwner").value,50),
-   questions
+   questions:[
+    {q:q1, o:opts1, a:ans1},
+    {q:q2, o:opts2, a:ans2}
+   ]
   };
-  const url=safeHashLink("quiz",data);
-  $("quizLinkText").textContent=url;
+  const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(data))));
+  history.replaceState(null,"",location.pathname+location.search+"#quiz="+encoded);
+  $("quizLinkText").textContent=location.href;
   $("quizLinkResult").classList.remove("hidden");
   $("quizStatus").textContent="কুইজের লিংক তৈরি হয়েছে।";
- }catch(e){$("quizStatus").textContent=e.message||"কুইজ তৈরি হয়নি।";}
-}
-$("quizAnswerForm").addEventListener("submit",e=>{
- e.preventDefault();
- if(!window.activeQuiz)return;
- const answers=[...$("quizAnswerQuestions").querySelectorAll("input[type=radio]:checked")];
- if(answers.length!==window.activeQuiz.questions.length){
-  $("quizScore").textContent="সব প্রশ্নের উত্তর দাও।";
-  $("quizScore").classList.remove("hidden");return;
- }
- const score=answers.reduce((n,input,i)=>n+(Number(input.value)===window.activeQuiz.questions[i].a?1:0),0);
- $("quizScore").textContent=clean($("quizPlayer").value,50)+" — তোমার স্কোর: "+score+" / "+window.activeQuiz.questions.length;
- $("quizScore").classList.remove("hidden");
-});
-
-/* TRUTH OR DARE */
-function createTD(){
- const truths=$("truthList").value.split("\n").map(x=>clean(x,200)).filter(Boolean);
- const dares=$("dareList").value.split("\n").map(x=>clean(x,200)).filter(Boolean);
- if(!truths.length||!dares.length){
-  $("tdStatus").textContent="কমপক্ষে একটি Truth ও একটি Dare লিখো।";return;
- }
- const data={
-  title:clean($("tdTitle").value,80)||"Truth or Dare",
-  owner:clean($("tdOwner").value,50),
-  truths:truths.slice(0,30),dares:dares.slice(0,30)
- };
- const url=safeHashLink("td",data);
- $("tdLinkResult").textContent=url;
- $("tdLinkResult").classList.remove("hidden");
- $("tdStatus").textContent="গেমের লিংক তৈরি হয়েছে।";
-}
-function pickTD(type){
- const game=window.activeTD;
- if(!game)return;
- if(type==="skip"){
-  $("tdPrompt").textContent="⏭️ এই রাউন্ড বাদ দেওয়া হয়েছে।";
-  $("tdPlayStatus").textContent="নতুন Truth বা Dare বেছে নাও।";
- }else{
-  const list=type==="truth"?game.truths:game.dares;
-  if(!list||!list.length)return;
-  const promptText=list[Math.floor(Math.random()*list.length)];
-  $("tdPrompt").textContent=(type==="truth"?"💬 TRUTH: ":"🔥 DARE: ")+promptText;
-  $("tdPrompt").dataset.prompt=promptText;
-  $("tdPrompt").dataset.type=type;
- }
- $("tdPrompt").classList.remove("hidden");
-}
-function saveTDAnswer(){
- if(!$("tdPlayer").value.trim()){
-  $("tdPlayStatus").textContent="আগে তোমার নাম লেখো।";return;
- }
- if(!$("tdPrompt").dataset.prompt){
-  $("tdPlayStatus").textContent="আগে Truth অথবা Dare বেছে নাও।";return;
- }
- const saved={
-  player:clean($("tdPlayer").value,50),
-  type:$("tdPrompt").dataset.type,
-  prompt:$("tdPrompt").dataset.prompt,
-  answer:clean($("tdAnswer").value,1000),
-  time:new Date().toISOString()
- };
- try{
-  const old=JSON.parse(localStorage.getItem("fz_td_answers")||"[]");
-  old.push(saved);
-  localStorage.setItem("fz_td_answers",JSON.stringify(old.slice(-100)));
-  $("tdPlayStatus").textContent="উত্তর এই ডিভাইসে সংরক্ষিত হয়েছে। অনলাইনে নির্মাতার কাছে পাঠানো হয়নি।";
- }catch(e){
-  $("tdPlayStatus").textContent="ডিভাইসে উত্তর সংরক্ষণ করা যায়নি।";
- }
+ }catch(e){$("quizStatus").textContent="কুইজ তৈরি হয়নি।";}
 }
 
-/* SHARED LINK ROUTING */
-function loadSharedLink(){
- const hash=location.hash;
- if(!hash)return;
- try{
-  if(hash.startsWith("#letter=")){
-   const d=decodeData(hash.slice(8));
-   if(typeof d.r==="string"&&typeof d.m==="string")showLetter({
-    s:clean(d.s,50),r:clean(d.r,50),m:clean(d.m,2500)
-   });
-  }else if(hash.startsWith("#gift=")){
-   const d=decodeData(hash.slice(6));
-   if(!d.r||!d.m||!d.expires)return;
-   if(Date.now()>d.expires){
-    openPage("giftResult");
-    $("giftStatus").textContent="এই গিফটের ৭ দিনের মেয়াদ শেষ হয়েছে।";
-   }else showGift({s:clean(d.s,50),r:clean(d.r,50),m:clean(d.m,1500)});
-  }else if(hash.startsWith("#quiz=")){
-   const d=decodeData(hash.slice(6));
-   if(!Array.isArray(d.questions)||!d.questions.length)return;
-   window.activeQuiz=d;
+/* ROUTING & FETCHING FROM SUPABASE */
+async function loadSharedLink(){
+ const hash = location.hash;
+ if(!hash) return;
+ 
+ try {
+  // যদি আইডি দিয়ে শেয়ার করা হয় (চিঠি বা গিফটের জন্য)
+  if(hash.startsWith("#id=")) {
+   const id = hash.slice(4);
+   const { data, error } = await supabaseClient
+     .from('shared_content')
+     .select('*')
+     .eq('id', id)
+     .single();
+
+   if(error || !data) throw error;
+
+   if(data.content_type === "letter" || data.content_type === "fletter") {
+    prepareEnvelope(data);
+   } else if(data.content_type === "gift") {
+    if(data.expires_at && new Date() > new Date(data.expires_at)) {
+     openPage("giftResult");
+     $("giftStatus").textContent="এই গিফটের মেয়াদ শেষ হয়েছে।";
+    } else {
+     showGift(data);
+    }
+   }
+  } 
+  // কুইজের জন্য আগের মতো হ্যাশ ডেটা
+  else if(hash.startsWith("#quiz=")) {
+   const d = JSON.parse(decodeURIComponent(escape(atob(hash.slice(6)))));
+   window.activeQuiz = d;
    openPage("quizPlay");
-   $("quizPlayTitle").textContent=d.title||"Friendship Quiz";
-   $("quizPlayOwner").textContent=d.owner?"কুইজ তৈরি করেছেন: "+d.owner:"";
-   const container=$("quizAnswerQuestions");
+   $("quizPlayTitle").textContent = d.title || "Friendship Quiz";
+   $("quizPlayOwner").textContent = d.owner ? "কুইজ তৈরি করেছেন: "+d.owner : "";
+   const container = $("quizAnswerQuestions");
    container.replaceChildren();
    d.questions.forEach((q,i)=>{
-    const card=document.createElement("div");card.className="question-card";
-    const h=document.createElement("h3");h.textContent=(i+1)+". "+q.q;card.append(h);
+    const card = document.createElement("div"); card.className = "question-card";
+    const h = document.createElement("h3"); h.textContent = (i+1)+". "+q.q; card.append(h);
     (q.o||[]).forEach((opt,j)=>{
-     const label=document.createElement("label");label.className="option";
-     const input=document.createElement("input");input.type="radio";
-     input.name="quiz_"+i;input.value=j;input.required=true;
-     const span=document.createElement("span");span.textContent=opt;
-     label.append(input,span);card.append(label);
+     const label = document.createElement("label"); label.className = "option";
+     const input = document.createElement("input"); input.type = "radio";
+     input.name = "quiz_"+i; input.value = j; input.required = true;
+     const span = document.createElement("span"); span.textContent = opt;
+     label.append(input, span); card.append(label);
     });
     container.append(card);
    });
-  }else if(hash.startsWith("#td=")){
-   const d=decodeData(hash.slice(4));
-   if(!Array.isArray(d.truths)||!Array.isArray(d.dares))return;
-   window.activeTD=d;
-   openPage("tdPlay");
-   $("tdPlayTitle").textContent=d.title||"Truth or Dare";
-   $("tdPlayOwner").textContent=d.owner?"গেম তৈরি করেছেন: "+d.owner:"";
   }
- }catch(e){
+ } catch(e) {
   openPage("home");
  }
 }
-loadSuggestedQuestions();
+
 loadSharedLink();
 </script>
 </body>
-  </html>
+ </html>
